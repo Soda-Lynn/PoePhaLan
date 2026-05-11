@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Your Gift</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <meta name="application-name" content="Poe Pha Lan" lang="en" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="pre.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="pre.svg">
+
+    <meta name="description" content="Someone has sent you a digital bouquet from Poe Pha Lan. Click to open your bouquet" />
+
+    <!-- meta og tags -->
+    <meta property="og:title" content="You've received a Bouquet!  " />
+    <meta property="og:site_name" content="Poe Pha Lan" />
+    <meta
+      property="og:description"
+      content="Someone sent you a digital bouquet from Poe Pha Lan. Click to open your beautiful bouquet!"
+    />
+    <meta
+      property="og:image"
+      content="https://poephalan.onrender.com/pre.png"
+    />
+    <meta property="og:type" content="website" /> 
+
+    <!-- schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Poe Pha Lan - Digital Gift Preview",
+        "description": "View your digital bouquet sent from someone."
+      }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+        
+        body { font-family: 'Bricolage Grotesque', sans-serif; background-color: #e9e4d1; margin: 0; overflow: hidden; }
+
+        @keyframes pageReveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #interactive-grid { 
+            position: fixed; top: 0; left: 0; width: 200vw; height: 200vh; 
+            background-image: radial-gradient(circle at 2px 2px, #bcbaaf 2px, transparent 0); 
+            background-size: 40px 40px; 
+            pointer-events: none; z-index: 0; 
+            animation: gridMove 30s linear infinite;
+        }
+        @keyframes gridMove { from { transform: translate(0, 0); } to { transform: translate(-40px, -40px); } }
+
+        .preview-stage { 
+            position: relative; z-index: 10; min-height: 100vh; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 2rem; transition: filter 0.5s ease; 
+            animation: pageReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .neo-btn { background: white; border: 3px solid black; font-weight: 900; box-shadow: 4px 4px 0px 0px black; padding: 10px 20px; text-transform: uppercase; font-size: 12px; }
+        .neo-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px black; }
+
+        #mini-card-wrapper {
+            position: absolute; bottom: 40px; right: 20px; width: 160px; height: 110px;
+            z-index: 40; cursor: pointer; perspective: 1000px;
+            transform: rotate(5deg); transition: transform 0.3s ease;
+        }
+        #mini-card-wrapper:hover { transform: rotate(0deg) scale(1.1); }
+
+        @media (max-width: 640px) {
+            #mini-card-wrapper {
+                width: 110px; height: 75px;
+            }
+        }
+
+        .envelope-back { 
+            position: absolute; inset: 0; background: #fff; border: 2px solid black; 
+            box-shadow: 4px 4px 0px 0px black; z-index: 1;
+        }
+
+        .envelope-flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+            background: #f0f0f0; border: 2px solid black;
+            z-index: 5; transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+
+        .envelope-paper {
+            position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
+            background: #fff; border: 2px solid black; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .opening .envelope-flap { transform: rotateX(180deg); z-index: 0; }
+        .opening .envelope-paper { transform: translateY(-40px) scale(0.9); opacity: 0; }
+        #mini-preview-msg { font-size: 10px; }
+        #bouquet-container { position: relative; width: 500px; height: 500px; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; transition: all 0.3s ease; }
+        #wrap-back-img, #wrap-front-img { width: 420px; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); pointer-events: none; }
+        #wrap-back-img { z-index: 10; } 
+        #flower-layer { position: absolute; width: 100%; height: 100%; z-index: 20; pointer-events: none; bottom: 0; } 
+        #wrap-front-img { z-index: 30; }
+
+        .placed-flower { position: absolute; width: 250px; left: 50%; bottom: 80px; margin-left: -125px; transform-origin: bottom center; }
+
+        #message-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); 
+            z-index: 100; display: none; align-items: center; justify-content: center; opacity: 0; 
+            transition: opacity 0.4s ease; backdrop-filter: blur(0px);
+        }
+        #message-overlay.active { display: flex; opacity: 1; backdrop-filter: blur(8px); }
+
+        #zoom-card {
+            background: white; border: 4px solid black; border-radius: 16px; width: 90%; max-width: 500px; padding: 40px;
+            box-shadow: 12px 12px 0px 0px black; 
+            transform: scale(0.3) rotate(-15deg); opacity: 0;
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s;
+        }
+        #message-overlay.active #zoom-card { transform: scale(1) rotate(0deg); opacity: 1; }
+
+        .handwriting-view { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; line-height: 1.6; margin: 25px 0; color: #2d1b2d; }
+
+        #link-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+
+        /* Responsive scaling for smaller screens */
+        @media (max-width: 640px) {
+            #bouquet-container { width: 350px; height: 350px; }
+            #wrap-back-img, #wrap-front-img { width: 300px; }
+            .placed-flower { width: 180px; margin-left: -90px; bottom: 60px; }
+            #mini-preview-msg { font-size: 6px; }
+        }
+    </style>
+</head>
+<body class="bg-[#e9e4d1]">
+
+    <div id="interactive-grid"></div>
+
+    <main class="preview-stage" id="main-content">
+        <header class="fixed top-10 left-10 z-20">
+            <div class="bg-white border-2 border-black p-4 shadow-[4px_4px_0_0_black] rounded-xl">
+                <p class="font-black uppercase italic text-sm">You Received A Bouquet!</p>
+            </div>
+        </header>
+
+        <div id="bouquet-container" class="bg-transparent">
+            <img id="wrap-back-img" src="wrap_back_1.svg">
+            <div id="flower-layer"></div>
+            <img id="wrap-front-img" src="wrap_front_1.svg">
+            
+            <div id="mini-card-wrapper" onclick="startOpeningSequence()">
+                <div class="envelope-paper" id="paper">
+                    <div class="flex flex-col items-center justify-center h-full w-full p-1 overflow-hidden">
+                        <p id="mini-preview-to" class="text-[7px] font-black uppercase border-b-[0.5px] border-black w-full text-center mb-0.5"></p>
+                        <p id="mini-preview-msg" class="text-[8px] font-bold text-center leading-tight flex-1 flex items-center">CLICK TO READ</p>
+                        <p id="mini-preview-from" class="text-[7px] font-black italic w-full text-right mt-0.5"></p>
+                    </div>
+                </div>
+                <div class="envelope-back"></div>
+            </div>
+        </div>
+
+        <footer class="fixed bottom-10 z-20 flex flex-col items-center gap-4">
+            <div class="flex gap-4">
+                <button onclick="downloadBouquet()" class="neo-btn bg-blue-400">SAVE IMAGE</button>
+                <button onclick="showLinkModal()" class="neo-btn bg-green-400">SHARE LINK</button>
+            </div>
+            <a href="bouquet.html" class="neo-btn bg-yellow-300 w-full text-center">CREATE NEW</a>
+        </footer>
+    </main>
+
+    <div id="link-modal">
+        <div class="bg-white p-8 rounded-3xl border-4 border-black shadow-[10px_10px_0_0_rgba(0,0,0,1)] max-w-md w-full">
+            <h3 class="font-black text-2xl mb-4 italic uppercase text-center">Gift Link Ready!</h3>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="final-link" readonly class="flex-1 border-2 border-black p-2 font-bold bg-gray-100 rounded-lg text-xs">
+                <button onclick="copyLink()" class="neo-btn bg-yellow-300 !p-2">COPY</button>
+            </div>
+            <button onclick="closeModal()" class="w-full neo-btn bg-black text-white">CLOSE</button>
+        </div>
+    </div>
+
+    <div id="message-overlay" onclick="closeFullMessage()">
+        <div id="zoom-card" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-start border-b-2 border-black pb-2 mb-4">
+                <p id="zoom-to" class="font-black uppercase text-xs"></p>
+                <button onclick="closeFullMessage()" class="font-black text-xl hover:text-red-500">×</button>
+            </div>
+            <p id="zoom-body" class="handwriting-view"></p>
+            <p id="zoom-from" class="font-black text-right italic text-sm"></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to decode a Base64 string from a URL, safe for UTF-8
+        function decodeBase64URL(str) {
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            const encodedData = params.get('data');
+            let data = {};
+
+            if (encodedData) {
+                try {
+                    data = JSON.parse(decodeBase64URL(encodedData));
+                } catch (e) {
+                    console.error("Error decoding or parsing URL data:", e);
+                    // Fallback to default or show error
+                }
+            }
+
+            const flowers = data.f?.split(',') || [];
+            const wrap = data.w || 1;
+            const to = data.to || 'Recipient';
+            const msg = data.m || 'No message provided.';
+            const from = data.fr || 'Sender';
+            
+            document.getElementById('wrap-back-img').src = `wrap_back_${wrap}.svg`;
+            document.getElementById('wrap-front-img').src = `wrap_front_${wrap}.svg`;
+            document.getElementById('zoom-to').textContent = to;
+            document.getElementById('zoom-body').textContent = msg;
+            document.getElementById('zoom-from').textContent = from;
+            document.getElementById('mini-preview-to').textContent = "To: " + to;
+            document.getElementById('mini-preview-msg').textContent = msg;
+            document.getElementById('mini-preview-from').textContent = "- " + from;
+
+            if (flowers.length > 0 && flowers[0] !== "") {
+                flowers.forEach((flowerStr, index) => {
+                    setTimeout(() => {
+                        const parts = flowerStr.split('|');
+                        const id = parts[0];
+                        
+                        const img = document.createElement('img');
+                        img.src = `${id}.svg`;
+                        img.className = 'placed-flower';
+                        
+                        if (parts.length > 1) {
+                            // Use explicit arrangement data from the URL
+                            const rot = parts[1];
+                            const scale = parts[2];
+                            const mb = parts[3];
+                            const flip = parts[4];
+                            const zIndex = parts[5];
+
+                            img.style.transform = `rotate(${rot}deg) scale(${scale}) scaleX(${flip})`;
+                            img.style.marginBottom = `${mb}px`;
+                            img.style.zIndex = zIndex;
+                        } else {
+                            // Fallback to pseudo-random if data isn't present
+                            const pseudoRandom = (seed) => {
+                                const x = Math.sin(seed) * 10000;
+                                return x - Math.floor(x);
+                            };
+                            const rot = (pseudoRandom(index + 1) - 0.5) * 60;
+                            const mb = pseudoRandom(index + 2) * 35;
+                            const flip = pseudoRandom(index + 3) > 0.5 ? -1 : 1;
+
+                            img.style.transform = `rotate(${rot}deg) scaleX(${flip})`;
+                            img.style.marginBottom = `${mb}px`;
+                            img.style.zIndex = index;
+                        }
+                        document.getElementById('flower-layer').appendChild(img);
+                    }, index * 50);
+                });
+            }
+        };
+
+        function startOpeningSequence() {
+            document.getElementById('mini-card-wrapper').classList.add('opening');
+            setTimeout(() => {
+                openFullMessage();
+            }, 600);
+        }
+
+        function openFullMessage() {
+            document.getElementById('message-overlay').classList.add('active');
+            document.getElementById('main-content').style.filter = "blur(10px)";
+        }
+
+        function closeFullMessage() {
+            document.getElementById('message-overlay').classList.remove('active');
+            document.getElementById('main-content').style.filter = "none";
+            document.getElementById('mini-card-wrapper').classList.remove('opening');
+        }
+
+        function showLinkModal() {
+            document.getElementById('final-link').value = window.location.href;
+            document.getElementById('link-modal').style.display = 'flex';
+        }
+
+        function copyLink() {
+            const linkInput = document.getElementById('final-link');
+            linkInput.select();
+            document.execCommand('copy');
+            alert("Link copied!");
+        }
+
+        function closeModal() { document.getElementById('link-modal').style.display = 'none'; }
+
+        function downloadBouquet() {
+            const container = document.getElementById('bouquet-container');
+            const miniCard = document.getElementById('mini-card-wrapper');
+            miniCard.style.display = 'none';
+            
+            html2canvas(container, { backgroundColor: null, scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'my-bouquet.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                miniCard.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>

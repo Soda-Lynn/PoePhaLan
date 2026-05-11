@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouquet Studio | Test</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+
+    <meta name="application-name" content="Poe Pha Lan" lang="en" />
+    <meta name="description" content="Design your own interactive digital bouquet. Pick your flowers, add a message, and share the love." />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- meta og tags -->
+    <meta property="og:title" content="Poe Pha Lan - Bouquet Studio" />
+    <meta property="og:site_name" content="Poe Pha Lan" />
+    <meta
+      property="og:description"
+      content="Create a custom handcrafted digital bouquet for your loved ones."
+    />
+    <meta
+      property="og:image"
+      content="https://poephalan.onrender.com/rose.png"
+    />
+    <meta property="og:url" content="https://poephalan.onrender.com/bouquet.html" />
+    <meta property="og:type" content="website" />
+
+    <!-- schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Poe Pha Lan - Bouquet Studio",
+        "url": "https://poephalan.onrender.com/bouquet.html",
+        "description": "Interactive studio for creating 3D digital flower bouquets."
+      }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Dancing+Script:wght@600&display=swap');
+        
+        @keyframes pageReveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        :root { --m-x: 50%; --m-y: 50%; }
+
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: #67568c; 
+            margin: 0; 
+            overflow-x: hidden; 
+            scroll-behavior: smooth; 
+            user-select: none;
+        }
+        page-shell {
+            position: relative;
+            z-index: 10;
+            background: #67568c;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            min-height: 100vh;
+            overflow: hidden;
+            animation: pageReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        header {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo-area h1 {
+            font-family: 'Space Grotesk';
+            font-size: 1rem !important;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 50;
+        }
+        header .logo-area h1 img {
+            width: 6rem;
+            height: 6rem;
+        }
+
+        .navbar {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 50;
+        }
+
+        .navbar .active-link { 
+            color: #8ec639; 
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-trigger {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .dropdown-trigger::after { 
+            content: '▼'; 
+            font-size: 1rem; 
+            transition: transform 0.3s; 
+        }
+        .dropdown.active .dropdown-trigger::after {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 2px solid black;
+            box-shadow: 4px 4px 0px 0px black;
+            z-index: 100;
+            min-width: 160px;
+            margin-top: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .dropdown.active .dropdown-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            display: block;
+            text-decoration: none;
+            color: black;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        .dropdown-item:last-child { 
+            border-bottom: none; 
+        }
+
+        .dropdown-item:hover {
+            background: #d2fc8d;
+            border: solid 2px black;
+        }
+
+        .menu-toggle {
+            display: none; width: 45px; height: 45px; background: #73ff00; border: 3px solid black;
+            box-shadow: 4px 4px 0px 0px black; cursor: pointer; z-index: 1001; flex-direction: column;
+            gap: 5px; align-items: center; justify-content: center;
+        }
+        .menu-toggle span { width: 25px; height: 4px; background: black; display: block; transition: 0.3s; }
+
+        .menu-toggle.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+        @media (max-width: 720px) {
+            .menu-toggle { display: flex; }
+            .navbar {
+                position: fixed; top: 0; right: -100%; height: 100vh; width: 250px;
+                background: white; border-left: 4px solid black; flex-direction: column;
+                padding: 80px 30px; z-index: 1000; transition: 0.4s;
+            }
+            .navbar.active { right: 0; }
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 15px;
+            }
+            footer { height: 250px; }
+        }
+
+        .grid-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: radial-gradient(circle at 2px 2px, #bcbaaf 2px, transparent 0);
+            background-size: 40px 40px; pointer-events: none; z-index: 0;
+        }
+
+        .grid-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(circle at 2px 2px, #73ff00 2px, transparent 0);
+            background-size: 40px 40px;
+            
+            mask-image: radial-gradient(250px circle at var(--m-x) var(--m-y), black, transparent);
+            -webkit-mask-image: radial-gradient(250px circle at var(--m-x) var(--m-y), black, transparent);
+        }
+        .section { position: relative; z-index: 10; min-height: 100vh; padding: 1rem; display: flex; flex-direction: column; }
+      
+        .card-container { perspective: 1000px; width: 130px; height: 180px; margin: auto; transition: all 0.3s ease; position: relative; }
+        .card-container:hover { transform: translateY(-8px); }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .card-container.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { 
+            position: absolute; width: 100%; height: 100%; 
+            border: 3px solid black; border-radius: 12px; 
+            backface-visibility: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between; 
+            padding: 0px; box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); overflow: visible; background-image: linear-gradient(transparent 122px, black 122px, black 125px, transparent 125px); justify-content: flex-start;
+        }
+        .card-back { background: white; transform: rotateY(180deg); justify-content: center; text-align: center; }
+
+        .white-cube {
+            position: absolute;
+            top: 18px; left: 50%; transform: translateX(-50%);
+            width: 90px; height: 90px;
+            background: white; border: 2px solid black;
+            border-radius: 10%;
+            z-index: 0;
+        }
+        .white-cube::after {
+            content: '';
+            position: absolute;
+            bottom: 8px; right: 8px;
+            width: 6px; height: 6px;
+            background: black; border-radius: 50%;
+        }
+
+        .flip-btn {
+            position: absolute; top: -5px; left: -5px;
+            background: white; border: 2px solid black;
+            width: 26px; height: 26px; border-radius: 50%;
+            font-size: 14px; font-weight: 900; z-index: 30;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 2px 2px 0px 0px black;
+        }
+
+        .selected-card .card-front { border-color: #ff4d4d; box-shadow: 6px 6px 0px 0px #ff4d4d; transform: scale(1.02); }
+        .multiplier {
+            position: absolute; bottom: -5px; right: -5px;
+            background: #ff4d4d; color: white; border: 2px solid black;
+            font-weight: 900; font-size: 12px; padding: 2px 8px;
+            border-radius: 20px; box-shadow: 2px 2px 0px 0px black;
+            display: none; z-index: 20; animation: pop 0.3s ease-out;
+        }
+        .selected-card .multiplier { display: block; }
+
+        .unselect-btn {
+            position: absolute; bottom: -5px; left: -5px;
+            background: white; border: 2px solid black;
+            width: 26px; height: 26px; border-radius: 50%;
+            font-size: 14px; font-weight: 900; z-index: 30;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 2px 2px 0px 0px black;
+        }
+        .selected-card .unselect-btn { display: flex; }
+        .unselect-btn:hover { background: #ff4d4d; color: white; }
+        
+        .unselect-btn::after {
+            content: 'Undo';
+            position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+            background: black; color: white; padding: 2px 8px; border-radius: 4px;
+            font-size: 10px; white-space: nowrap; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .unselect-btn:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes pop { 0% { transform: scale(1.5); } 100% { transform: scale(1); } }
+
+        .card-container:active { animation: card-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes card-bounce { 0% { transform: scale(1) translateY(-8px); } 40% { transform: scale(0.9) translateY(0px); } 100% { transform: scale(1) translateY(-8px); } }
+
+        .builder-outer { background: #2d1b2d; border: 4px solid black; border-radius: 24px; width: 100%; max-width: 1000px; margin: auto; box-shadow: 0px 10px 0px 0px rgba(0,0,0,1); overflow: hidden; }
+        .canvas-area { background: #abd1c6; border: 4px solid black; border-radius: 12px; margin: 15px; height: 500px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #bouquet-container { position: relative; width: 450px; height: 450px; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; }
+        #wrap-back-img, #wrap-front-img { width: 380px; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); pointer-events: none; }
+        #wrap-back-img { z-index: 10; } 
+        #flower-layer { position: absolute; width: 100%; height: 100%; z-index: 20; pointer-events: none; bottom: 0; } 
+        #wrap-front-img { z-index: 30; }
+
+        .placed-flower { 
+            position: absolute; width: 220px; left: 50%; bottom: 80px; margin-left: -110px;
+            transform-origin: bottom center; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            object-fit: contain; cursor: pointer; pointer-events: auto;
+        }
+
+        .card-front p {
+            margin-top: 28px;
+            z-index: 10;
+        }
+
+        .card-front img {
+            position: relative;
+            z-index: 10;
+        }
+
+        .gift-card { position: absolute; right: -320px; width: 260px; height: 180px; background: white; border: 3px solid black; box-shadow: 6px 6px 0px 0px black; padding: 15px; transition: 0.6s; z-index: 60; }
+        .show-msg #bouquet-wrapper { transform: translateX(-120px) scale(0.8); }
+        .show-msg .gift-card { right: 30px; }
+        .handwriting { font-family: 'Dancing Script', cursive; font-size: 1.2rem; border: none; background: transparent; width: 100%; height: 100px; resize: none; outline: none; }
+
+        .card-front img {
+            width: 140%;
+            height: 140px;
+            margin-top: -30px;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.2));
+        }
+
+        .builder-chin { background: #2d1b2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .neo-btn { background: white; border: 2px solid black; font-weight: 900; box-shadow: 3px 3px 0px 0px black; padding: 8px 15px; text-transform: uppercase; font-size: 11px; }
+        .neo-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px black; }
+        
+        .finish-btn-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .flower-counter { position: absolute; top: 15px; left: 10px; background: white; border: 2px solid black; padding: 5px 12px; font-weight: 900; z-index: 50; transform: rotate(-2deg); box-shadow: 3px 3px 0px 0px black; }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+
+    <div class="page-shell">
+        <header>
+            <div class="logo-area animate-entry" style="animation-delay: 0.1s; cursor:pointer" onclick="location.href='index.html'">
+                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Poe Pha Lan</h1>
+            </div>
+            <button class="menu-toggle animate-entry" id="menuToggle" style="animation-delay: 0.2s;">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="navbar animate-entry" id="navMenu" style="animation-delay: 0.2s;">
+                <a href="index.html">Home</a>
+                <div class="dropdown" id="servicesDropdown">
+                    <span class="dropdown-trigger" onclick="toggleDropdown(event)">Services</span>
+                    <div class="dropdown-menu">
+                        <a href="test.html" class="dropdown-item">Bouquet Studio</a>
+                        <a href="fodbox.html" class="dropdown-item">Food Box Studio</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="feedback.html" class="nav-link">Feedback</a>
+            </nav>
+        </header>
+
+        <div id="selection-section" class="section">
+            <div id="limit-warning" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] bg-red-500 text-white text-xl px-8 py-4 font-black animate-bounce hidden rounded-xl border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)]">MAX 12 FLOWERS!</div>
+        <div class="max-w-6xl mx-auto mb-auto">
+            <h2 class="text-xl font-black uppercase mb-8 text-center">Pick Your Blooms (Max 12)</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6" id="flower-grid"></div>
+        </div>
+        <div class="flex justify-center mt-10">
+            <button onclick="scrollToBuilder()" class="neo-btn px-10 py-3 text-lg bg-yellow-300">CONTINUE TO STUDIO ➔</button>
+        </div>
+    </div>
+
+    <div id="builder-section" class="section">
+        <div class="builder-outer" id="main-builder">
+            <div class="canvas-area">
+                <div class="flower-counter" id="flower-counter">FLOWERS: 0 / 12</div>
+                <div id="bouquet-wrapper" class="transition-all duration-500">
+                    <div id="bouquet-container">
+                        <img id="wrap-back-img" src="wrap_back_1.svg" alt="back wrap">
+                        <div id="flower-layer"></div>
+                        <img id="wrap-front-img" src="wrap_front_1.svg" alt="front wrap">
+                    </div>
+                </div>
+                <div class="gift-card rounded-lg">
+                    <input type="text" id="msg-to" class="w-full font-black text-[10px] outline-none" placeholder="To: Dear Someone">
+                    <textarea id="msg-body" class="handwriting" placeholder="Write something sweet..."></textarea>
+                    <input type="text" id="msg-from" class="w-full font-black text-[10px] text-right outline-none" placeholder="- Your Lovely">
+                </div>
+            </div>
+            <div class="builder-chin">
+                <div class="flex gap-4">
+                    <button onclick="changeWrap()" class="neo-btn">CHANGE WRAP</button>
+                    <button onclick="toggleMessage()" class="neo-btn bg-cyan-300">MESSAGE</button>
+                    <button onclick="arrangeEverything()" class="neo-btn bg-yellow-300">ARRANGE</button>
+                </div>
+                <div class="flex gap-4 items-center ml-auto">
+                    <button onclick="resetBouquet()" class="neo-btn bg-red-500 text-white border-white">RESET</button>
+                    <button onclick="goToPreview()" class="neo-btn bg-green-400 finish-btn-circle">FINISH &<br>PREVIEW</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const servicesDropdown = document.getElementById('servicesDropdown');
+
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            servicesDropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', () => {
+            servicesDropdown.classList.remove('active');
+        });
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        window.addEventListener('mousemove', e => {
+            document.documentElement.style.setProperty('--m-x', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--m-y', `${e.clientY}px`);
+        });
+
+        const FLOWERS = [
+            { id: 'rose', name: 'Rose', color: '#ff9494', img: 'rose.svg', meaning: 'Love & Passion' },
+            { id: 'sunflower', name: 'Sunflower', color: '#ffdb58', img: 'sunflower.svg', meaning: 'Adoration & Loyalty' },
+            { id: 'tulip', name: 'Tulip', color: '#ffb7ff', img: 'tulip.svg', meaning: 'Perfect Love' },
+            { id: 'lily', name: 'Lily', color: '#ffffff', img: 'lily.svg', meaning: 'Purity & Rebirth' },
+            { id: 'carnation', name: 'Carnation', color: '#ffcaaf', img: 'carnation.svg', meaning: 'Devotion & Distinction' },
+            { id: 'orchid', name: 'Orchid', color: '#c3aaff', img: 'orchid.svg', meaning: 'Strength & Beauty' },
+            { id: 'daisy', name: 'Daisy', color: '#fef3c7', img: 'daisy.svg', meaning: 'Innocence & New Starts' },
+            { id: 'daffodil', name: 'Daffodil', color: '#fff700', img: 'daffodil.svg', meaning: 'New Beginnings' },
+            { id: 'lilac', name: 'Lilac', color: '#dcd0ff', img: 'lilac.svg', meaning: 'First Emotions of Love' },
+            { id: 'baby_breath', name: "Baby's Breath", color: '#ffffff', img: 'baby_breath.svg', meaning: 'Everlasting Love' },
+            { id: 'lavender', name: 'Lavender', color: '#e6e6fa', img: 'lavender.svg', meaning: 'Serenity & Grace' }
+        ];
+
+        let bouquet = [];
+        const MAX_FLOWERS = 12;
+        let wrapIdx = 1;
+
+        const grid = document.getElementById('flower-grid');
+        FLOWERS.forEach(f => {
+            const card = document.createElement('div');
+            card.className = 'card-container';
+            card.id = `container-${f.id}`;
+            card.innerHTML = `
+                <button class="flip-btn" onmouseover="toggleFlip('${f.id}')" onmouseout="toggleFlip('${f.id}')">?</button>
+                <button class="unselect-btn" onclick="event.stopPropagation(); removeLastFlowerOfType('${f.id}')">↺</button>
+                <div class="card-inner">
+                    <div class="card-front" style="background-color: ${f.color}">
+                        <div class="white-cube"></div>
+                        <img src="${f.img}" class="w-full h-24 object-contain pointer-events-none">
+                        <p class="font-black italic text-[14px] uppercase">${f.name}</p>
+                        <div class="multiplier" id="count-${f.id}">x0</div>
+                    </div>
+                    <div class="card-back"><p class="font-black text-[10px] uppercase mb-2">Meaning</p><p class="italic text-xs px-2">${f.meaning}</p></div>
+                </div>`;
+            card.onclick = () => {
+                addFlower(f);
+            };
+            grid.appendChild(card);
+        });
+
+        function toggleFlip(id) { document.getElementById(`container-${id}`).classList.toggle('flipped'); }
+
+        function addFlower(f) {
+            if (bouquet.length >= MAX_FLOWERS) { showWarning(); return; }
+            const instanceId = `flower-${Date.now()}`;
+            
+            const rot = (Math.random() - 0.5) * 40;
+            const scale = 1;
+            const mb = 0;
+            const flip = 1;
+            const zIndex = bouquet.length;
+
+            bouquet.push({ ...f, instanceId, rot, scale, mb, flip, zIndex });
+            const img = document.createElement('img');
+            img.src = f.img; img.id = instanceId; img.className = 'placed-flower';
+            img.style.transform = `rotate(${rot}deg) scale(0.5) scaleX(${flip})`;
+            img.style.opacity = "0";
+            img.style.zIndex = zIndex;
+            img.style.marginBottom = `${mb}px`;
+            img.onclick = (e) => { e.stopPropagation(); removeFlower(instanceId); };
+            document.getElementById('flower-layer').appendChild(img);
+            setTimeout(() => { img.style.opacity = "1"; img.style.transform = `rotate(${rot}deg) scale(${scale}) scaleX(${flip})`; }, 50);
+            updateUI();
+        }
+
+        function removeFlower(instanceId) {
+            bouquet = bouquet.filter(f => f.instanceId !== instanceId);
+            document.getElementById(instanceId)?.remove();
+            updateUI();
+        }
+
+        function removeLastFlowerOfType(flowerId) {
+            const lastFlower = [...bouquet].reverse().find(f => f.id === flowerId);
+            if (lastFlower) {
+                removeFlower(lastFlower.instanceId);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('flower-counter').textContent = `FLOWERS: ${bouquet.length} / ${MAX_FLOWERS}`;
+            FLOWERS.forEach(f => {
+                const count = bouquet.filter(item => item.id === f.id).length;
+                const container = document.getElementById(`container-${f.id}`);
+                const badge = document.getElementById(`count-${f.id}`);
+                if (count > 0) { container.classList.add('selected-card'); badge.textContent = `x${count}`; }
+                else { container.classList.remove('selected-card'); }
+            });
+        }
+
+        function arrangeEverything() {
+            const flowers = document.querySelectorAll('.placed-flower');
+            flowers.forEach((img) => {
+                const rotate = (Math.random() - 0.5) * 90; 
+                const scale = 0.9 + (Math.random() * 0.35); 
+                const mb = (Math.random() * 35);
+                const flip = Math.random() > 0.5 ? -1 : 1;
+                const zIndex = Math.floor(Math.random() * 20); 
+                
+                img.style.zIndex = zIndex; 
+                img.style.transform = `rotate(${rotate}deg) scale(${scale}) scaleX(${flip})`;
+                img.style.marginBottom = `${mb}px`;
+
+                const flowerObj = bouquet.find(f => f.instanceId === img.id);
+                if (flowerObj) {
+                    flowerObj.rot = rotate;
+                    flowerObj.scale = scale;
+                    flowerObj.mb = mb;
+                    flowerObj.flip = flip;
+                    flowerObj.zIndex = zIndex;
+                }
+            });
+        }
+
+        function changeWrap() {
+            wrapIdx = (wrapIdx % 6) + 1;
+            document.getElementById('wrap-back-img').src = `wrap_back_${wrapIdx}.svg`;
+            document.getElementById('wrap-front-img').src = `wrap_front_${wrapIdx}.svg`;
+        }
+
+        function toggleMessage() { document.getElementById('main-builder').classList.toggle('show-msg'); }
+        function scrollToBuilder() { document.getElementById('builder-section').scrollIntoView({ behavior: 'smooth' }); }
+        function showWarning() { const w = document.getElementById('limit-warning'); w.classList.remove('hidden'); setTimeout(() => w.classList.add('hidden'), 2000); }
+        function resetBouquet() { bouquet = []; document.getElementById('flower-layer').innerHTML = ''; updateUI(); }
+
+        function encodeBase64URL(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+                function toSolidBytes(match, p1) {
+                    return String.fromCharCode(parseInt(p1, 16));
+                }));
+        }
+
+        function goToPreview() {
+            if (bouquet.length === 0) { alert("Please add some flowers first!"); return; }
+            
+            const flowerData = bouquet.map(f => 
+                `${f.id}|${f.rot.toFixed(1)}|${f.scale.toFixed(2)}|${f.mb.toFixed(1)}|${f.flip}|${f.zIndex}`
+            ).join(',');
+
+            const data = {
+                f: flowerData,
+                w: wrapIdx,
+                to: document.getElementById('msg-to').value,
+                m: document.getElementById('msg-body').value,
+                fr: document.getElementById('msg-from').value
+            };
+
+            const encodedData = encodeBase64URL(JSON.stringify(data));
+            window.location.href = `preview.html?data=${encodedData}`;
+        }
+    </script>
+</body>
+</html>
