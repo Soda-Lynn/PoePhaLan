@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  background-color: #e9e4d1;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: radial-gradient(circle at 2px 2px, #bcbaaf 2px, transparent 0);
+  background-size: 40px 40px;
+  overflow: hidden;
+  user-select: none;
+}
+
+@keyframes pageReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  display: flex;
+  gap: 12em;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  animation: pageReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cube {
+  --x: 10em; --y: 8em; --z: 5em;
+  --rotX: 65deg; --rotZ: 45deg;
+  --texture: url('https://www.transparenttextures.com/patterns/cardboard.png');
+  --fallback: #d2b48c; 
+  position: relative;
+  transform-style: preserve-3d;
+  width: var(--x); height: var(--y); 
+  transform: rotateX(var(--rotX)) rotateZ(var(--rotZ));
+  cursor: grab;
+  transition: transform 0.1s ease-out;
+}
+
+.cube:active { cursor: grabbing; }
+
+/* Face Shared Logic */
+.cube div, .cube::before, .cube::after {
+  content: '';
+  position: absolute;
+  transform-style: preserve-3d;
+  border: 2px solid rgba(0,0,0,0.2);
+  background: var(--texture), var(--color, var(--fallback));
+  background-size: auto;
+  box-sizing: border-box;
+}
+
+/* BOX TYPES */
+.cube.brutalist div, .cube.brutalist::before, .cube.brutalist::after { --texture: none; border: 4px solid #000; }
+.cube.cyber div, .cube.cyber::before, .cube.cyber::after { 
+  --texture: none; 
+  border: 2px solid #00f2ff; 
+  background: #1a1a1a; 
+  box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
+
+/* Walls Logic */
+.cube::before { width: 100%; height: var(--z); transform-origin: top center; rotate: x 90deg; filter: brightness(0.9); }
+.cube::after { width: 100%; height: var(--z); translate: 0 var(--y); transform-origin: top center; rotate: x 90deg; filter: brightness(1.1); }
+.side-left { width: var(--z); height: 100%; transform-origin: left center; rotate: y -90deg; filter: brightness(0.8); }
+.side-right { width: var(--z); height: 100%; transform-origin: left center; rotate: y -90deg; translate: var(--x); filter: brightness(1.2); }
+.side-bottom { width: 100%; height: 100%; transform: translateZ(0.2px); filter: brightness(0.7); }
+
+/* LID LOGIC */
+.lid {
+  width: 100%; height: 100%;
+  translate: 0 0 var(--z);
+  transform-origin: center top; 
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10;
+}
+
+/* --- NIKE TRAY BOX (Box 5) --- */
+.cube.tray-box { 
+  --z: 3.5em; 
+  --color: #ff4800; /* Nike Orange */
+  --texture: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+} 
+
+/* Resetting the border for Nike box for a cleaner look */
+.cube.tray-box div, .cube.tray-box::before, .cube.tray-box::after { border: 1px solid rgba(0,0,0,0.15); }
+
+.cube.tray-box .lid {
+  width: calc(var(--x) + 0.4em); 
+  height: calc(var(--y) + 0.4em);
+  left: -0.2em; top: -0.2em;
+  translate: 0 0 calc(var(--z) + 0.5em); 
+  transform-style: preserve-3d;
+  background: var(--color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Nike Logo */
+.cube.tray-box .lid::after {
+  content: 'NIKE';
+  position: absolute;
+  font-family: 'Arial Black', sans-serif;
+  font-size: 2.2em;
+  color: white;
+  filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+  background: none; border: none; width: auto; height: auto; transform: none;
+}
+
+.lid-side { position: absolute; background: inherit; border: inherit; height: 1.8em; width: 100%; }
+.ls-f { top: 100%; transform-origin: top; transform: rotateX(-90deg); filter: brightness(0.9); }
+.ls-b { bottom: 100%; transform-origin: bottom; transform: rotateX(90deg); filter: brightness(1.1); }
+.ls-l { width: 1.8em; height: 100%; right: 100%; transform-origin: right; transform: rotateY(-90deg); filter: brightness(0.8); }
+.ls-r { width: 1.8em; height: 100%; left: 100%; transform-origin: left; transform: rotateY(90deg); filter: brightness(1.2); }
+
+/* ANIMATIONS */
+.cube.tray-box .lid.open { translate: 0 -6em 8em; }
+.cube:not(.cyber):not(.tray-box):hover .lid:not(.detached) { transform: rotateX(110deg); }
+.cube.cyber:hover .lid:not(.detached) { translate: 0 -8em var(--z); }
+.lid.detached { transform: rotateX(0deg) rotateZ(25deg); translate: 8em -8em 12em; }
+
+/* Handles for standard boxes */
+.lid::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 3em; height: 1.2em;
+  border: 0.4em solid #000; border-bottom: none; border-radius: 0.4em 0.4em 0 0;
+  transform: translate(-50%, -50%) rotateX(-90deg);
+}
+.cube.tray-box .lid::before { display: none; }
+.cube.cyber .lid::before { border-color: #00f2ff; box-shadow: 0 0 10px #00f2ff; }
+
+/* APPLE BOX */
+.cube.apple-box { --color: #ffffff; --x: 8em; --y: 8em; --z: 8em; }
+.cube.apple-box .lid { translate: 0 0 calc(var(--z) + 0.1em); }
+.cube.apple-box .lid::before { display: none; }
+.cube.apple-box .lid::after {
+  content: '';
+  position: absolute;
+  font-size: 4em;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: none; border: none; width: auto; height: auto;
+}
+.cube.apple-box .side-left::after, .cube.apple-box .side-right::after {
+  content: 'iPhone'; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="cube" style="--color: #a0c283;"><div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="lid"></div></div>
+  <div class="cube" style="--color: #33ccff;"><div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="lid"></div></div>
+  <div class="cube brutalist" style="--color: #f4f000;"><div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="lid"></div></div>
+  <div class="cube cyber"><div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="lid"></div></div>
+
+  <div class="cube tray-box">
+    <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div>
+    <div class="lid">
+      <div class="lid-side ls-f"></div>
+      <div class="lid-side ls-b"></div>
+      <div class="lid-side ls-l"></div>
+      <div class="lid-side ls-r"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeCube = null;
+  let startX, startY;
+
+  document.querySelectorAll('.cube').forEach(cube => {
+    cube.rotX = 65; cube.rotZ = 45;
+    cube.addEventListener('mousedown', (e) => {
+      activeCube = cube;
+      startX = e.pageX; startY = e.pageY;
+      e.stopPropagation();
+    });
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!activeCube) return;
+    const deltaX = e.pageX - startX;
+    const deltaY = e.pageY - startY;
+    activeCube.rotZ += deltaX * 0.5;
+    activeCube.rotX -= deltaY * 0.5;
+    activeCube.rotX = Math.min(Math.max(activeCube.rotX, 10), 85);
+    activeCube.style.setProperty('--rotX', activeCube.rotX + 'deg');
+    activeCube.style.setProperty('--rotZ', activeCube.rotZ + 'deg');
+    startX = e.pageX; startY = e.pageY;
+  });
+
+  window.addEventListener('mouseup', () => { activeCube = null; });
+  
+  document.querySelectorAll('.lid').forEach(lid => {
+    lid.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cube = lid.closest('.cube');
+        if (cube && cube.classList.contains('tray-box')) {
+            lid.classList.toggle('open');
+        } else {
+            lid.classList.toggle('detached');
+        }
+    });
+  });
+</script>
+
+</body>
+</html>

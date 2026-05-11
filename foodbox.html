@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Box Studio | Poe Phalan Myar</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+
+    <meta name="application-name" content="Poe Pha Lan" lang="en" />
+    <meta name="description" content="Build an interactive 3D food box gift. Fill it with snacks, drinks, and Myanmar treats." />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- meta og tags -->
+    <meta property="og:title" content="Poe Pha Lan - Food Box Studio" />
+    <meta property="og:site_name" content="Poe Pha Lan" />
+    <meta
+      property="og:description"
+      content="Create a personalized interactive 3D snack box for your friends and family."
+    />
+    <meta
+      property="og:image"
+      content="https://poephalan.onrender.com/rose.png"
+    />
+    <meta property="og:url" content="https://poephalan.onrender.com/foodbox.html" />
+    <meta property="og:type" content="website" />
+
+    <!-- schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Poe Pha Lan - Food Box Studio",
+        "url": "https://poephalan.onrender.com/foodbox.html",
+        "description": "Interactive studio for creating 3D digital food gift boxes."
+      }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&display=swap');
+        
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-entry { opacity: 0; transform: translateY(30px); }
+        .loaded .animate-entry { animation: slideUpFade 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+        :root { --m-x: 50%; --m-y: 50%; }
+
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: #2d1b2d; 
+            margin: 0; 
+            overflow-x: hidden; 
+            user-select: none;
+            scroll-behavior: smooth;
+        }
+        .page-shell {
+            position: relative; z-index: 10; background: #ede4d6;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            min-height: 100vh; overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.6s ease;
+            transform-origin: bottom center;
+            animation: slideUpFade 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .scroll-reveal {
+            opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+
+       header {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo-area h1 {
+            font-family: 'Space Grotesk';
+            font-size: 1rem !important;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 50;
+        }
+        header .logo-area h1 img {
+            width: 6rem;
+            height: 6rem;
+        }
+        
+        .navbar {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 50;
+        }
+        .navbar .active-link { 
+            color: #8ec639; 
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-trigger {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .dropdown-trigger::after { 
+            content: '▼'; 
+            font-size: 1rem; 
+            transition: transform 0.3s; 
+        }
+        .dropdown.active .dropdown-trigger::after {
+            transform: rotate(180deg);
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 2px solid black;
+            box-shadow: 4px 4px 0px 0px black;
+            z-index: 100;
+            min-width: 160px;
+            margin-top: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .dropdown.active .dropdown-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-item { padding: 10px 15px; display: block; text-decoration: none; color: black; border-bottom: 1px solid #eee; }
+        .dropdown-item:hover { background: #d2fc8d; }
+
+        .menu-toggle {
+            display: none; width: 45px; height: 45px; background: #73ff00; border: 3px solid black;
+            box-shadow: 4px 4px 0px 0px black; cursor: pointer; z-index: 1001; flex-direction: column;
+            gap: 5px; align-items: center; justify-content: center;
+        }
+        .menu-toggle span { width: 25px; height: 4px; background: black; display: block; transition: 0.3s; }
+
+        .menu-toggle.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+        @media (max-width: 720px) {
+            .menu-toggle { display: flex; }
+            .navbar {
+                position: fixed; top: 0; right: -100%; height: 100vh; width: 250px;
+                background: white; border-left: 4px solid black; flex-direction: column;
+                padding: 80px 30px; z-index: 1000; transition: 0.4s;
+            }
+            .navbar.active { right: 0; }
+            .navbar .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 15px;
+            }
+            .page-shell { margin-bottom: 0; }
+            #category-tabs { justify-content: flex-start; padding-left: 1rem; padding-right: 1rem; }
+            .builder-outer { border-width: 2px; }
+            .canvas-area { 
+                height: 350px; 
+                margin: 5px;
+                order: -1; /* Move box above selection on mobile */
+            }
+        }
+
+        .section { position: relative; z-index: 10; min-height: 100vh; padding: 1rem; display: flex; flex-direction: column; }
+
+        /* --- CAROUSEL SPIN LIST STYLING --- */
+        .spin-carousel-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1200px;
+            margin: 2rem 0;
+        }
+        .spin-carousel-track {
+            position: relative;
+            width: 100%;
+            max-width: 200px;
+            height: 280px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            pointer-events: none; /* Allow clicks to pass through track */
+        }
+        .card-container { 
+            position: absolute;
+            width: 160px;
+            height: 220px;
+            left: 20px;
+            top: 30px;
+            transition: all 0.3s ease;
+            backface-visibility: hidden;
+            pointer-events: auto; /* Re-enable for cards specifically */
+        }
+        .card-inner-menu { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .card-front { 
+            position: absolute; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between; 
+            padding: 0px; overflow: visible; justify-content: flex-start;
+        }
+        .card-container:active .card-front { transform: scale(0.92); }
+
+        /* Undo Button Styling */
+        .undo-btn {
+            position: absolute; bottom: -5px; left: -5px;
+            background: white; border: 2px solid black;
+            width: 26px; height: 26px; border-radius: 50%;
+            font-size: 14px; font-weight: 900; z-index: 30;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 2px 2px 0px 0px black;
+            transition: all 0.2s;
+        }
+        .card-container.has-items .undo-btn { display: flex; }
+        .undo-btn:hover { background: #ff4d4d; color: white; }
+        .undo-btn:active { transform: scale(0.8); box-shadow: 0px 0px 0px 0px black; }
+
+        .card-front img { width: 100%; height: 100px; object-fit: contain; margin-top: 10px; }
+        .card-front p { margin-top: 10px; font-weight: 900; text-transform: uppercase; font-size: 12px; }
+
+        /* Selection Indicator */
+        .card-container.has-items .card-front img {
+            filter: drop-shadow(0 0 8px #73ff00);
+            transform: scale(1.1);
+        }
+        .count-badge {
+            display: none;
+            position: absolute; top: -10px; right: -10px;
+            background: #73ff00; border: 2px solid black;
+            width: 28px; height: 28px; border-radius: 50%;
+            align-items: center; justify-content: center;
+            font-weight: 900; font-size: 12px; z-index: 10;
+            box-shadow: 2px 2px 0px 0px black;
+        }
+        .card-container.has-items .count-badge { display: flex !important; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .neo-btn { background: white; border: 2px solid black; font-weight: 900; box-shadow: 3px 3px 0px 0px black; padding: 8px 15px; text-transform: uppercase; font-size: 11px; }
+        .neo-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px black; }
+
+        .gift-card { position: absolute; right: -320px; width: 260px; height: 180px; background: white; border: 3px solid black; box-shadow: 6px 6px 0px 0px black; padding: 15px; transition: 0.6s; z-index: 60; border-radius: 8px; }
+        .show-msg .viewport { transform: translateX(-120px) scale(0.8); }
+        .show-msg .gift-card { right: 30px; }
+        .handwriting { font-family: 'Dancing Script', cursive; font-size: 1.2rem; border: none; background: transparent; width: 100%; height: 100px; resize: none; outline: none; }
+
+        .builder-outer { background: transparent; border: none; border-radius: 0; width: 100%; max-width: 1000px; margin: auto; box-shadow: none; overflow: hidden; }
+        .canvas-area { 
+            background: #119b9483; border: 4px solid black; border-radius: 12px; 
+            margin: 15px; height: 550px; 
+            position: relative; display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; 
+            box-shadow: none;
+        }
+
+        .viewport {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            perspective: 2000px;
+        }
+
+        .box-carousel { display: flex; gap: 15vw; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d; align-items: center; }
+        .cube-wrapper { perspective: 1200px; transform-style: preserve-3d; transition: transform 0.6s, opacity 0.6s; transform: scale(0.6); opacity: 0.4; }
+        .cube-wrapper.active { transform: scale(1); opacity: 1; z-index: 50; }
+        .cube { --x: 12em; --y: 10em; --z: 4.5em; --rotX: 65deg; --rotZ: 45deg; --color: #3b82f6; position: relative; transform-style: preserve-3d; width: var(--x); height: var(--y); transform: rotateX(var(--rotX)) rotateZ(var(--rotZ)); transition: transform 0.1s ease-out; cursor: grab; }
+        
+        /* --- BOX TEXTURES CONFIG --- */
+        .box-1 { --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); }
+        .box-3 { --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); }
+        .box-4 { --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); }
+        .box-5 { --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); }
+        .box-6 { --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); }
+
+        .cube div, .cube::before, .cube::after { content: ''; position: absolute; transform-style: preserve-3d; border: 1px solid rgba(0,0,0,0.15); background: var(--texture), var(--color); box-sizing: border-box; }
+        .cube::before { width: 100%; height: var(--z); transform-origin: top center; rotate: x 90deg; filter: brightness(0.9); }
+        .cube::after { width: 100%; height: var(--z); translate: 0 var(--y); transform-origin: top center; rotate: x 90deg; filter: brightness(1.1); }
+        .side-left { width: var(--z); height: 100%; transform-origin: left center; rotate: y -90deg; filter: brightness(0.8); }
+        .side-right { width: var(--z); height: 100%; transform-origin: left center; rotate: y -90deg; translate: var(--x); filter: brightness(1.2); }
+        .side-bottom { width: 100%; height: 100%; transform: translateZ(0.2px); background: #d2b48c !important; position: relative; overflow: hidden; }
+        .side-top { width: 100%; height: 100%; transform: translateZ(var(--z)); background: transparent !important; border: 1px solid rgba(0,0,0,0.1) !important; pointer-events: none; }
+        .lid { width: calc(var(--x) + 0.4em); height: calc(var(--y) + 0.4em); left: -0.2em; top: -0.2em; translate: 0 0 calc(var(--z) + 0.5em); transform-origin: center top; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); background: url('https://www.transparenttextures.com/patterns/cardboard.png'), var(--color); z-index: 10; transform-style: preserve-3d; }
+        .lid-side { position: absolute; background: inherit; border: inherit; height: 1.8em; width: 100%; }
+        .ls-f { top: 100%; transform-origin: top; transform: rotateX(-90deg); filter: brightness(0.9); }
+        .ls-b { bottom: 100%; transform-origin: bottom; transform: rotateX(90deg); filter: brightness(1.1); }
+        .ls-l { width: 1.8em; height: 100%; right: 100%; transform-origin: right; transform: rotateY(-90deg); filter: brightness(0.8); }
+        .ls-r { width: 1.8em; height: 100%; left: 100%; transform-origin: left; transform: rotateY(90deg); filter: brightness(1.2); }
+        .lid.open { translate: 0 -8em 10em; rotate: x 15deg; }
+        .lid-inner { width: 100%; height: 100%; position: absolute; translate: 0 0 var(--z); background: #fdf5e6 !important; background-image: none !important; border: 2px solid rgba(0, 0, 0, 0.2); pointer-events: none; z-index: 5; display: flex; align-items: center; justify-content: center; font-size: 0.8em; font-weight: 900; color: rgba(0,0,0,0.3); overflow: hidden; }
+        .box-label { display: none; }
+        .food-in-box { width: 10em; height: 10em; object-fit: contain; position: absolute; margin-left: -5em; margin-top: -5em; filter: drop-shadow(4px 4px 2px rgba(0,0,0,0.3)); cursor: pointer; z-index: 20; transition: transform 0.1s ease-out; pointer-events: auto; }
+
+        .nav-btn { background: white; border: 4px solid black; width: 50px; height: 50px; font-size: 20px; font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 3px 3px 0px 0px black; }
+        .nav-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px black; }
+
+        .color-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid black; cursor: pointer; transition: transform 0.2s; }
+        .color-dot:hover { transform: scale(1.2); }
+        .color-dot:active { transform: scale(0.9); }
+
+        .inventory-box { background: white; border: 3px solid black; border-radius: 15px; padding: 15px; box-shadow: 4px 4px 0px 0px black; width: 250px; }
+
+        /* --- MESSAGE ON LID STYLING --- */
+        .lid-message-area {
+            position: absolute; inset: 10px;
+            display: flex; flex-direction: column;
+            pointer-events: auto;
+        }
+        .lid-input { background: transparent; border: none; outline: none; font-weight: 900; text-transform: uppercase; font-size: 0.6rem; width: 100%; color: rgba(0,0,0,0.7); }
+        .lid-textarea { background: transparent; border: none; outline: none; font-family: 'Dancing Script', cursive; font-size: 1rem; resize: none; width: 100%; height: 100%; color: #222; line-height: 1.2; }
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
+        .lid.open .lid-message-area { pointer-events: none; }
+        /* --- EXPAND ANIMATION --- */
+        .category-grid { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); max-height: 0; overflow: hidden; opacity: 0; }
+        .category-grid.active { max-height: 2000px; opacity: 1; padding-top: 12px; padding-bottom: 12px; }
+        .plus-icon { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: inline-block; }
+        .plus-icon.rotated { transform: rotate(45deg); }
+
+        .builder-chin { background: transparent; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    </style>
+</head>
+<body class="loaded">
+    <div class="page-shell">
+        <header>
+            <div class="logo-area animate-entry" style="animation-delay: 0.1s; cursor:pointer" onclick="location.href='index.html'">
+                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Poe Pha Lan</h1>
+            </div>
+            <button class="menu-toggle animate-entry" id="menuToggle" style="animation-delay: 0.2s;">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="navbar animate-entry" id="navMenu" style="animation-delay: 0.2s;">
+                <a href="index.html">Home</a>
+                <div class="dropdown" id="servicesDropdown">
+                    <span class="dropdown-trigger" onclick="toggleDropdown(event)">Services</span>
+                    <div class="dropdown-menu">
+                        <a href="bouquet.html" class="dropdown-item">Bouquet Studio</a>
+                        <a href="foodbox.html" class="dropdown-item">Food Box Studio</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="feedback.html" class="nav-link">Feedback</a>
+            </nav>
+        </header>
+
+        <div id="selection-section" class="section animate-entry overflow-hidden" style="animation-delay: 0.3s;">
+        <div class="max-w-6xl mx-auto w-full flex flex-col items-center">
+            <h2 class="text-xl font-black uppercase mb-4 text-center scroll-reveal">Pick Your Foods</h2>
+            
+            <!-- Category Tabs -->
+            <div id="category-tabs" class="flex gap-2 mb-4 overflow-x-auto pb-2 w-full justify-center no-scrollbar whitespace-nowrap"></div>
+
+            <div class="spin-carousel-container" id="carousel-parent">
+                <div class="spin-carousel-track" id="spin-track"></div>
+            </div>
+            <p class="text-xs font-black uppercase opacity-50 animate-pulse -mt-10 mb-4">Scroll or Swipe to Spin</p>
+            <div class="inventory-box mb-8 w-full max-w-xs">
+                <p class="font-black uppercase text-xs mb-2 border-b-2 border-black">Box Inventory</p>
+                <div id="invList-top" class="text-[10px] font-bold">Box is empty...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="builder-section" class="section scroll-reveal !min-h-0 pt-0">
+        <div class="builder-outer" id="main-builder">
+            <div class="canvas-area">
+                <div class="viewport">
+                    <div class="box-carousel" id="carousel">
+                        <div class="cube-wrapper">
+                            <div class="cube box-1" style="--color: #3b82f6;">
+                                <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="side-top"></div>
+                                <div class="lid-inner"><div class="box-items" style="position: absolute; inset: 0;"></div>BREAD BOX</div>
+                                <div class="lid" onclick="this.classList.toggle('open')">
+                                    <div class="lid-side ls-f"></div><div class="lid-side ls-b"></div><div class="lid-side ls-l"></div><div class="lid-side ls-r"></div>
+                                    <div class="lid-message-area" onclick="event.stopPropagation()">
+                                        <input type="text" class="lid-input" placeholder="TO: SOMEONE">
+                                        <textarea class="lid-textarea" placeholder="Write on the box..."></textarea>
+                                        <input type="text" class="lid-input text-right" placeholder="- FROM ME">
+                                    </div>
+                                </div>
+                                <div class="box-label">BLUE BREAD BOX</div>
+                            </div>
+                        </div>
+                        <div class="cube-wrapper">
+                            <div class="cube box-2" style="--color: #ef4444;">
+                                <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="side-top"></div>
+                                <div class="lid-inner"><div class="box-items" style="position: absolute; inset: 0;"></div>DONUT BOX</div>
+                                <div class="lid" onclick="this.classList.toggle('open')">
+                                    <div class="lid-side ls-f"></div><div class="lid-side ls-b"></div><div class="lid-side ls-l"></div><div class="lid-side ls-r"></div>
+                                    <div class="lid-message-area" onclick="event.stopPropagation()">
+                                        <input type="text" class="lid-input" placeholder="TO: SOMEONE">
+                                        <textarea class="lid-textarea" placeholder="Write on the box..."></textarea>
+                                        <input type="text" class="lid-input text-right" placeholder="- FROM ME">
+                                    </div>
+                                </div>
+                                <div class="box-label">RED DONUT BOX</div>
+                            </div>
+                        </div>
+                        <div class="cube-wrapper">
+                            <div class="cube box-3" style="--color: #10b981;">
+                                <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="side-top"></div>
+                                <div class="lid-inner"><div class="box-items" style="position: absolute; inset: 0;"></div>SNACK BOX</div>
+                                <div class="lid" onclick="this.classList.toggle('open')">
+                                    <div class="lid-side ls-f"></div><div class="lid-side ls-b"></div><div class="lid-side ls-l"></div><div class="lid-side ls-r"></div>
+                                    <div class="lid-message-area" onclick="event.stopPropagation()">
+                                        <input type="text" class="lid-input" placeholder="TO: SOMEONE">
+                                        <textarea class="lid-textarea" placeholder="Write on the box..."></textarea>
+                                        <input type="text" class="lid-input text-right" placeholder="- FROM ME">
+                                    </div>
+                                </div>
+                                <div class="box-label">GREEN SNACK BOX</div>
+                            </div>
+                        </div>
+                        <div class="cube-wrapper">
+                            <div class="cube box-4" style="--color: #f59e0b;">
+                                <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="side-top"></div>
+                                <div class="lid-inner"><div class="box-items" style="position: absolute; inset: 0;"></div>FRUIT BOX</div>
+                                <div class="lid" onclick="this.classList.toggle('open')">
+                                    <div class="lid-side ls-f"></div><div class="lid-side ls-b"></div><div class="lid-side ls-l"></div><div class="lid-side ls-r"></div>
+                                    <div class="lid-message-area" onclick="event.stopPropagation()">
+                                        <input type="text" class="lid-input" placeholder="TO: SOMEONE">
+                                        <textarea class="lid-textarea" placeholder="Write on the box..."></textarea>
+                                        <input type="text" class="lid-input text-right" placeholder="- FROM ME">
+                                    </div>
+                                </div>
+                                <div class="box-label">ORANGE FRUIT BOX</div>
+                            </div>
+                        </div>
+                        <div class="cube-wrapper">
+                            <div class="cube box-5" style="--color: #8b5cf6;">
+                                <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="side-top"></div>
+                                <div class="lid-inner"><div class="box-items" style="position: absolute; inset: 0;"></div>DRINK BOX</div>
+                                <div class="lid" onclick="this.classList.toggle('open')">
+                                    <div class="lid-side ls-f"></div><div class="lid-side ls-b"></div><div class="lid-side ls-l"></div><div class="lid-side ls-r"></div>
+                                    <div class="lid-message-area" onclick="event.stopPropagation()">
+                                        <input type="text" class="lid-input" placeholder="TO: SOMEONE">
+                                        <textarea class="lid-textarea" placeholder="Write on the box..."></textarea>
+                                        <input type="text" class="lid-input text-right" placeholder="- FROM ME">
+                                    </div>
+                                </div>
+                                <div class="box-label">PURPLE DRINK BOX</div>
+                            </div>
+                        </div>
+                        <div class="cube-wrapper">
+                            <div class="cube box-6" style="--color: #ffffff;">
+                                <div class="side-left"></div><div class="side-right"></div><div class="side-bottom"></div><div class="side-top"></div>
+                                <div class="lid-inner"><div class="box-items" style="position: absolute; inset: 0;"></div>GIFT BOX</div>
+                                <div class="lid" onclick="this.classList.toggle('open')">
+                                    <div class="lid-side ls-f"></div><div class="lid-side ls-b"></div><div class="lid-side ls-l"></div><div class="lid-side ls-r"></div>
+                                    <div class="lid-message-area" onclick="event.stopPropagation()">
+                                        <input type="text" class="lid-input" placeholder="TO: SOMEONE">
+                                        <textarea class="lid-textarea" placeholder="Write on the box..."></textarea>
+                                        <input type="text" class="lid-input text-right" placeholder="- FROM ME">
+                                    </div>
+                                </div>
+                                <div class="box-label">WHITE GIFT BOX</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gift-card">
+                    <input type="text" id="msg-to" class="w-full font-black text-[10px] outline-none" placeholder="To: Dear Someone">
+                    <textarea id="msg-body" class="handwriting" placeholder="Write something sweet..."></textarea>
+                    <input type="text" id="msg-from" class="w-full font-black text-[10px] text-right outline-none" placeholder="- Your Lovely">
+                </div>
+
+                <div class="absolute bottom-4 right-4">
+                    <div class="inventory-box">
+                        <p class="font-black uppercase text-xs mb-2 border-b-2 border-black">Box Inventory</p>
+                        <div id="invList" class="text-[10px] font-bold">Box is empty...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="builder-chin">
+                <div class="flex gap-4 items-center">
+                    <button class="nav-btn" onclick="navigate(-1)">&larr;</button>
+                    <button class="nav-btn" onclick="navigate(1)">&rarr;</button>
+                    <button onclick="toggleMessage()" class="neo-btn bg-cyan-300">MESSAGE</button>
+                    <button onclick="shuffleBox()" class="neo-btn bg-yellow-300">SHUFFLE</button>
+                </div>
+                <div class="flex gap-2 bg-white p-2 border-2 border-black rounded-full shadow-[3px_3px_0_0_black]">
+                    <div class="color-dot" style="background: #3b82f6;" onclick="changeBoxColor('#3b82f6')"></div>
+                    <div class="color-dot" style="background: #ef4444;" onclick="changeBoxColor('#ef4444')"></div>
+                    <div class="color-dot" style="background: #10b981;" onclick="changeBoxColor('#10b981')"></div>
+                    <div class="color-dot" style="background: #f59e0b;" onclick="changeBoxColor('#f59e0b')"></div>
+                    <div class="color-dot" style="background: #8b5cf6;" onclick="changeBoxColor('#8b5cf6')"></div>
+                    <div class="color-dot" style="background: #ec4899;" onclick="changeBoxColor('#ec4899')"></div>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="goToPreview()" class="neo-btn bg-green-400 px-6">FINISH & PREVIEW ➔</button>
+                    <button onclick="resetBouquet()" class="neo-btn bg-red-500 text-white border-white">RESET</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const servicesDropdown = document.getElementById('servicesDropdown');
+
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            servicesDropdown.classList.toggle('active');
+        }
+
+        window.addEventListener('click', () => {
+            servicesDropdown.classList.remove('active');
+        });
+
+        window.addEventListener('mousemove', e => {
+            document.documentElement.style.setProperty('--m-x', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--m-y', `${e.clientY}px`);
+        });
+
+        menuToggle.addEventListener('click', () => { menuToggle.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        
+        const FOOD_DATA = {
+            "Snacks": [
+                { id: 'fries', name: 'Chips' }, { id: 'cake', name: 'Cake' }, { id: 'cake2', name: 'Cake 2' },
+                { id: 'cake3', name: 'Cake 3' }, { id: 'dumpling', name: 'Dumplings' }, { id: 'bread', name: 'Bread' },
+                { id: 'bread2', name: 'Bread 2' }, { id: 'cheesybread', name: 'Cheesy Bread' }, { id: 'humbow', name: 'Humbow' }
+            ],
+            "Fruits": [
+                { id: 'apple', name: 'Apple' }, { id: 'mango', name: 'Mango' }, { id: 'strawberry', name: 'Strawberry' },
+                { id: 'grape', name: 'Grape' }, { id: 'banana', name: 'Banana' }, { id: 'orange', name: 'Orange' },
+                { id: 'pineapple', name: 'Pineapple' }, { id: 'durian', name: 'Durian' }
+            ],
+            "Soft Drinks": [
+                { id: 'soda', name: 'Soda' }, { id: 'cola', name: 'Cola' }, { id: 'fanta', name: 'Fanta' },
+                { id: 'yogurt', name: 'Yogurt' }, { id: 'milo', name: 'Milo' }, { id: 'pepsi', name: 'Pepsi' },
+                { id: 'water', name: 'Water' }
+            ],
+            "Alcohol": [
+                { id: 'JackDaniels', name: 'Jack Daniels' }, 
+                { id: 'heineken', name: 'Heineken' },
+                { id: 'absolut_vodka', name: 'Absolut Vodka' },
+                { id: 'cantina', name: 'Cantina Tre Cascine' },
+                { id: 'Chivas', name: 'Chivas Regal' }
+            ],
+            "မြန်မာ့မုန့်": [
+                { id: 'mony_lone_yay_paw', name: 'မုန့်လုံးရေပေါ်' }, { id: 'kauk_nyin_shwe_kyi', name: 'ကောက်ညှင်းရွှေကျီ' },
+                { id: 'nan_win_ma_kin', name: 'နနွင်းမကင်း' }, { id: 'mont_ku_lar_mae', name: 'မုန့်ကုလားမဲ' },
+                { id: 'mont_kywal_thae', name: 'မုန့်ကျွဲသဲ' }, { id: 'mont_lin_ma_yar', name: 'မုန့်လင်မယား' },
+                { id: 'mont_leik_pyar', name: 'မုန့်လိပ်ပြာ' }, { id: 'mont_let_kauk', name: 'မုန့်လက်ကောက်' },
+                { id: 'htan_thee_mont', name: 'ထန်းသီးမုန့်' }, { id: 'shwe_htamin', name: 'ရွှေထမင်း' },
+                { id: 'pyar_yay_htoke', name: 'ပြာရည်ထုပ်' }
+            ],
+            "မြန်မာ့မုန့် (အအေးစာ)": [
+                { id: 'shwe_yin_aye', name: 'ရွှေရင်အေး' }, { id: 'mont_let_saung', name: 'မုန့်လက်ဆောင်း' },
+                { id: 'ngat_pyaw_baung', name: 'ငှက်ပျောပေါင်း' }
+            ]
+        };
+
+        const spinTrack = document.getElementById('spin-track');
+        const tabsContainer = document.getElementById('category-tabs');
+        let currentRotation = 0;
+
+        function renderCarousel(category) {
+            spinTrack.innerHTML = '';
+            const items = FOOD_DATA[category];
+            const count = items.length;
+            const radius = 350;
+            const angleStep = 360 / count;
+
+            items.forEach((item, i) => {
+                const card = document.createElement('div');
+                card.className = 'card-container';
+                card.style.transform = `rotateY(${i * angleStep}deg) translateZ(${radius}px)`;
+                card.onclick = () => addToBox(item.id, item.name, item.id);
+                card.innerHTML = `
+                    <div class="card-inner-menu">
+                        <div class="card-front">
+                            <button class="undo-btn" onclick="event.stopPropagation(); removeFromAllBoxes('${item.id}', '${item.name}')">↺</button>
+                            <img src="${item.id}.svg">
+                            <div class="count-badge" id="badge-${item.id}">0</div>
+                            <p>${item.name}</p>
+                            <p class="text-[8px] opacity-40 !mt-1">Click to Add</p>
+                        </div>
+                    </div>`;
+                spinTrack.appendChild(card);
+            });
+            currentRotation = 0;
+            spinTrack.style.transform = `rotateY(0deg)`;
+        }
+
+        Object.keys(FOOD_DATA).forEach((cat, idx) => {
+            const btn = document.createElement('button');
+            btn.className = `neo-btn ${idx === 0 ? 'bg-yellow-300' : ''}`;
+            btn.textContent = cat;
+            btn.onclick = () => {
+                document.querySelectorAll('#category-tabs button').forEach(b => b.classList.remove('bg-yellow-300'));
+                btn.classList.add('bg-yellow-300');
+                renderCarousel(cat);
+            };
+            tabsContainer.appendChild(btn);
+        });
+
+        // Scroll & Touch to Spin Logic
+        let isDragging = false;
+        let startTouchX = 0;
+
+        document.getElementById('carousel-parent').addEventListener('wheel', (e) => {
+            e.preventDefault();
+            currentRotation += e.deltaY * -0.1;
+            spinTrack.style.transform = `rotateY(${currentRotation}deg)`;
+        }, { passive: false });
+
+        document.getElementById('carousel-parent').addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startTouchX = e.touches[0].pageX;
+        });
+
+        document.getElementById('carousel-parent').addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const currentX = e.touches[0].pageX;
+            const diff = currentX - startTouchX;
+            currentRotation += diff * 0.5;
+            spinTrack.style.transform = `rotateY(${currentRotation}deg)`;
+            startTouchX = currentX;
+        });
+
+        document.getElementById('carousel-parent').addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        renderCarousel(Object.keys(FOOD_DATA)[0]);
+
+        let currentBoxIndex = 0;
+        const carousel = document.getElementById('carousel');
+        const cubes = document.querySelectorAll('.cube');
+        const wrappers = document.querySelectorAll('.cube-wrapper');
+        let inventories = Array.from({length: wrappers.length}, () => ({}));
+
+        // Rotation Logic for ALL cubes
+        cubes.forEach((cube, index) => {
+            cube.rotX = 65; cube.rotZ = 45;
+            let startX, startY;
+
+            const handleStart = (e) => {
+                const touch = e.touches ? e.touches[0] : e;
+                startX = touch.pageX;
+                startY = touch.pageY;
+                
+                const moveRotate = (ev) => {
+                    const touchMove = ev.touches ? ev.touches[0] : ev;
+                    const cx = touchMove.pageX;
+                    const cy = touchMove.pageY;
+                    cube.rotZ += (cx - startX) * 0.5;
+                    cube.rotX -= (cy - startY) * 0.5;
+                    cube.rotX = Math.min(Math.max(cube.rotX, 20), 85);
+                    cube.style.setProperty('--rotX', cube.rotX + 'deg');
+                    cube.style.setProperty('--rotZ', cube.rotZ + 'deg');
+                    updateBillboarding(cube);
+                    startX = cx; startY = cy;
+                };
+
+                const endRotate = () => {
+                    document.removeEventListener('mousemove', moveRotate);
+                    document.removeEventListener('mouseup', endRotate);
+                    document.removeEventListener('touchmove', moveRotate);
+                    document.removeEventListener('touchend', endRotate);
+                };
+                document.addEventListener('mousemove', moveRotate);
+                document.addEventListener('mouseup', endRotate);
+                document.addEventListener('touchmove', moveRotate, { passive: false });
+                document.addEventListener('touchend', endRotate);
+            };
+
+            cube.addEventListener('mousedown', handleStart);
+            cube.addEventListener('touchstart', handleStart, { passive: false });
+        });
+
+        // Navigation Logic
+        function navigate(direction) {
+            const total = document.querySelectorAll('.cube-wrapper').length;
+            currentBoxIndex = Math.min(Math.max(currentBoxIndex + direction, 0), total - 1);
+            updateCarousel();
+            updateInvDisplay();
+        }
+
+        function scrollToBuilder() { document.getElementById('builder-section').scrollIntoView({ behavior: 'smooth' }); }
+
+        function updateCarousel() {
+            const items = document.querySelectorAll('.cube-wrapper');
+            items.forEach((w, i) => {
+                w.classList.toggle('active', i === currentBoxIndex);
+            });
+
+            // Calculate step: wrapper width + gap (15vw)
+            const wrapperWidth = items[0].offsetWidth || 200; 
+            const gapWidth = window.innerWidth * 0.15;
+            const step = wrapperWidth + gapWidth;
+            
+            // Centering logic for flex container
+            const offset = ( (items.length - 1) / 2 - currentBoxIndex ) * step;
+            carousel.style.transform = `translateX(${offset}px)`;
+        }
+
+        function changeBoxColor(color) {
+            const activeCube = cubes[currentBoxIndex];
+            activeCube.style.setProperty('--color', color);
+        }
+
+        function toggleMessage() { 
+            const builder = document.getElementById('main-builder');
+            builder.classList.toggle('show-msg');
+            
+            // Sync inputs between lid and gift card
+            const activeCube = cubes[currentBoxIndex];
+            const lidTo = activeCube.querySelector('.lid-input:first-child');
+            const lidBody = activeCube.querySelector('.lid-textarea');
+            const lidFrom = activeCube.querySelector('.lid-input:last-child');
+            
+            document.getElementById('msg-to').value = lidTo.value;
+            document.getElementById('msg-body').value = lidBody.value;
+            document.getElementById('msg-from').value = lidFrom.value;
+        }
+
+        // Init
+        window.addEventListener('load', () => {
+            updateCarousel();
+            updateInvDisplay();
+        });
+
+        function shuffleBox() {
+            const activeCube = cubes[currentBoxIndex];
+            const items = activeCube.querySelectorAll('.food-in-box');
+            items.forEach(img => {
+                // Randomize position within the box (20% to 80% range)
+                img.style.left = (Math.random() * 60 + 20) + "%";
+                img.style.top = (Math.random() * 60 + 20) + "%";
+            });
+        }
+
+        function updateBillboarding(cube) {
+            const items = cube.querySelectorAll('.food-in-box');
+            items.forEach(img => {
+                img.style.transform = `translateZ(var(--z)) rotateX(${-cube.rotX}deg)`;
+            });
+        }
+
+        function addToBox(fileName, itemType, itemId) {
+            cubes.forEach((cube, idx) => {
+                const inv = inventories[idx];
+                const itemsContainer = cube.querySelector('.box-items');
+                const currentCount = itemsContainer.querySelectorAll('.food-in-box').length;
+
+                cube.querySelector('.lid').classList.add('open');
+
+                const img = document.createElement('img');
+                img.src = fileName + ".svg";
+                img.className = "food-in-box";
+                img.dataset.itemId = itemId;
+                
+                // Alcohol items take two columns (wider)
+                const isAlcohol = FOOD_DATA["Alcohol"].some(a => a.id === itemId);
+                if (isAlcohol) img.style.width = "18em";
+
+                const slot = currentCount % 9;
+                img.style.left = ((slot % 3) * 30 + 20) + "%";
+                img.style.top = (Math.floor(slot / 3) * 30 + 20) + "%";
+                
+                img.onclick = (e) => {
+                    e.stopPropagation();
+                    removeFromAllBoxes(itemId, itemType);
+                };
+                
+                itemsContainer.appendChild(img);
+                img.style.transform = `translateZ(var(--z)) rotateX(${-cube.rotX}deg)`;
+                inv[itemType] = (inv[itemType] || 0) + 1;
+            });
+            updateInvDisplay(itemId);
+        }
+
+        function removeFromAllBoxes(itemId, itemType) {
+            cubes.forEach((cube, idx) => {
+                const inv = inventories[idx];
+                const items = cube.querySelectorAll(`.food-in-box[data-item-id="${itemId}"]`);
+                if (items.length > 0) {
+                    items[items.length - 1].remove();
+                    inv[itemType]--;
+                }
+            });
+            updateInvDisplay(itemId);
+        }
+
+        function updateInvDisplay(itemId) {
+            const list = document.getElementById('invList');
+            const listTop = document.getElementById('invList-top');
+            const inv = inventories[currentBoxIndex];
+            
+            // Update Badge for the specific item if provided
+            if (itemId) {
+                const badge = document.getElementById(`badge-${itemId}`);
+                const category = Object.keys(FOOD_DATA).find(cat => FOOD_DATA[cat].some(i => i.id === itemId));
+                const item = category ? FOOD_DATA[category].find(i => i.id === itemId) : null;
+                if (item) {
+                    const count = inv[item.name] || 0;
+                    if(badge) {
+                        badge.textContent = `x${count}`;
+                        badge.closest('.card-container').classList.toggle('has-items', count > 0);
+                    }
+                }
+            }
+
+            if (!inv || Object.keys(inv).length === 0 || Object.values(inv).every(v => v === 0)) {
+                list.innerHTML = "Box is empty...";
+                if(listTop) listTop.innerHTML = "Box is empty...";
+                return;
+            }
+            const content = Object.entries(inv)
+                .map(([name, count]) => count > 0 ? `<div>${name} x${count}</div>` : '')
+                .join('');
+            list.innerHTML = content;
+            if(listTop) listTop.innerHTML = content;
+        }
+
+        function encodeBase64URL(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+                function toSolidBytes(match, p1) {
+                    return String.fromCharCode(parseInt(p1, 16));
+                }));
+        }
+
+        function goToPreview() {
+            const activeCube = cubes[currentBoxIndex];
+            const foodItems = activeCube.querySelectorAll('.food-in-box');
+            const items = Array.from(foodItems).map(img => 
+                `${img.dataset.itemId}|${parseFloat(img.style.left)}|${parseFloat(img.style.top)}`
+            );
+
+            const data = {
+                i: items.join(','),
+                bt: currentBoxIndex + 1,
+                c: getComputedStyle(activeCube).getPropertyValue('--color').trim(),
+                to: document.getElementById('msg-to').value,
+                m: document.getElementById('msg-body').value,
+                fr: document.getElementById('msg-from').value
+            };
+
+            const encodedData = encodeBase64URL(JSON.stringify(data));
+            window.location.href = `preview_foodbox.html?data=${encodedData}`;
+        }
+
+        function resetBouquet() {
+            inventories = Array.from({length: wrappers.length}, () => ({}));
+            cubes.forEach(cube => {
+                const container = cube.querySelector('.box-items');
+                if (container) container.innerHTML = '';
+            });
+            updateInvDisplay();
+            document.querySelectorAll('.count-badge').forEach(badge => {
+                badge.textContent = '0';
+                badge.closest('.card-container').classList.remove('has-items');
+            });
+        }
+
+        // Real-time sync from gift card back to lid
+        document.getElementById('msg-to').addEventListener('input', (e) => {
+            cubes[currentBoxIndex].querySelector('.lid-input:first-child').value = e.target.value;
+        });
+        document.getElementById('msg-body').addEventListener('input', (e) => {
+            cubes[currentBoxIndex].querySelector('.lid-textarea').value = e.target.value;
+        });
+        document.getElementById('msg-from').addEventListener('input', (e) => {
+            cubes[currentBoxIndex].querySelector('.lid-input:last-child').value = e.target.value;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback & Ideas | Poe Phalan Myar</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&display=swap');
+        
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: #ff4d4d; 
+            margin: 0; 
+            overflow-x: hidden; 
+            scroll-behavior: smooth;
+        }
+
+        .page-shell {
+            position: relative;
+            z-index: 10;
+            background: #ede4d6;
+            margin-bottom: 300px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            min-height: 100vh;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.6s ease;
+            transform-origin: bottom center;
+        }
+
+        header {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo-area h1 {
+            font-family: 'Space Grotesk';
+            font-size: 1rem !important;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 50;
+        }
+        header .logo-area h1 img {
+            width: 6rem;
+            height: 6rem;
+        }
+
+        .navbar {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .navbar .active-link { 
+            color: #8ec639; 
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-trigger { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .dropdown-trigger::after { content: '▼'; font-size: 1rem; transition: transform 0.3s; }
+        .dropdown.active .dropdown-trigger::after { transform: rotate(180deg); }
+        .dropdown-menu {
+            display: none; position: absolute; top: 100%; left: 0; background: white;
+            border: 2px solid black; box-shadow: 4px 4px 0px 0px black; z-index: 100;
+            min-width: 160px; margin-top: 10px;
+        }
+        .dropdown.active .dropdown-menu { display: block; }
+        .dropdown-item { padding: 10px 15px; display: block; text-decoration: none; color: black; border-bottom: 1px solid #eee; }
+        .dropdown-item:hover { background: #d2fc8d; }
+
+        .neo-input {
+            width: 100%;
+            border: 3px solid black;
+            padding: 1rem;
+            font-weight: 700;
+            box-shadow: 4px 4px 0px 0px black;
+            outline: none;
+            transition: 0.2s;
+        }
+        .neo-input:focus {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px #73ff00;
+        }
+
+        .neo-btn {
+            background: #73ff00;
+            border: 3px solid black;
+            padding: 1rem 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            box-shadow: 6px 6px 0px 0px black;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .neo-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px 0px black;
+        }
+        .neo-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px black;
+        }
+
+        footer {
+            position: fixed; bottom: 0; width: 100%; height: 300px;
+            background: #ff4d4d; text-align: center; z-index: 1;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s;
+        }
+        .footer-tag { padding: 8px 20px; display: inline-block; font-weight: 900; color: black; text-transform: uppercase; font-size: 0.75rem; }
+        .footer-visible .page-shell {
+            transform: scale(0.92) translateY(-20px);
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+        .footer-visible footer { opacity: 1; visibility: visible; transition-delay: 0.5s; }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            width: 45px;
+            height: 45px;
+            background: #73ff00;
+            border: 3px solid black;
+            box-shadow: 4px 4px 0px 0px black;
+            cursor: pointer;
+            z-index: 1001;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-toggle span { width: 25px; height: 4px; background: black; display: block; transition: 0.3s; }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+        @media (max-width: 720px) {
+            .menu-toggle { display: flex; }
+            .navbar {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 250px;
+                background: white;
+                border-left: 4px solid black;
+                flex-direction: column;
+                padding: 80px 30px;
+                z-index: 1000;
+                transition: 0.4s;
+                overflow-y: auto;
+            }
+            .navbar.active { right: 0; }
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 15px;
+            }
+            .page-shell { margin-bottom: 250px; }
+            footer { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header>
+            <div class="logo-area animate-entry" style="animation-delay: 0.1s; cursor:pointer" onclick="location.href='index.html'">
+                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Poe Pha Lan</h1>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="navbar" id="navMenu">
+                <a href="index.html">Home</a>
+                <div class="dropdown" id="servicesDropdown">
+                    <span class="dropdown-trigger" onclick="toggleDropdown(event)">Services</span>
+                    <div class="dropdown-menu">
+                        <a href="bouquet.html" class="dropdown-item">Bouquet Studio</a>
+                        <a href="foodbox.html" class="dropdown-item">Food Box Studio</a>
+                    </div>
+                </div>
+                <a href="about.html">About</a>
+                <a href="feedback.html" class="active-link">Feedback</a>
+            </nav>
+        </header>
+
+        <main class="max-w-3xl mx-auto px-6 py-16">
+            <div class="mb-12 text-center">
+                <h2 class="inline-block bg-[#ff4d4d] text-white border-4 border-black px-6 py-2 text-3xl font-black uppercase transform -rotate-1 shadow-[6px_6px_0_0_black] mb-8">
+                    Drop an Idea
+                </h2>
+                <p class="text-lg font-bold text-gray-800">
+                    Have a suggestion for a new digital gift? Want to see a specific flower or snack added? We're all ears!
+                </p>
+            </div>
+
+            <form id="feedbackForm" class="space-y-8">
+                <div>
+                    <label class="block font-black uppercase text-sm mb-2">Your Name</label>
+                    <input type="text" name="name" class="neo-input" placeholder="Enter your name" required>
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-sm mb-2">Suggestion Category</label>
+                    <select name="category" class="neo-input">
+                        <option>New Gift Service Idea</option>
+                        <option>Item Suggestion (Flowers/Food)</option>
+                        <option>Website Feedback</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-sm mb-2">Your Message</label>
+                    <textarea name="message" rows="5" class="neo-input" placeholder="I'd love to see a 3D Coffee Shop gift studio..." required></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="neo-btn">Send Suggestion ➔</button>
+                </div>
+            </form>
+
+            <!-- Success Message Overlay -->
+            <div id="successMessage" class="hidden mt-12 p-8 border-4 border-black bg-[#73ff00] shadow-[8px_8px_0_0_black] text-center">
+                <h3 class="text-2xl font-black uppercase mb-4">Triggering Email App...</h3>
+                <p class="font-bold mb-4">If your email application didn't open automatically, please send your idea directly to:</p>
+                <p class="text-xl font-black border-2 border-black bg-white inline-block px-4 py-2 mb-6">akira.kai.272@gmail.com</p>
+                <div class="mt-4">
+                    <button onclick="location.reload()" class="neo-btn bg-white">Go Back</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-content scroll-reveal">
+            <div class="footer-tag"></div>
+            <div class="footer-tag-2 mb-1"> Poe Pha Lan © 2026</div>
+            <p style="color: rgba(0, 0, 0); font-size: 0.8rem; margin-top: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
+                 Your Digital Gift Platform | Created by The Moths
+            </p>
+            <p style="color: rgba(0, 0, 0, 0.6); font-size: 0.65rem; margin-bottom: 5rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+                © 2026 Poe Pha Lan. Visual identity and interactive elements by The Moth Studio. Stay Close to the light. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const servicesDropdown = document.getElementById('servicesDropdown');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = this.name.value;
+            const category = this.category.value;
+            const message = this.message.value;
+            
+            const subject = encodeURIComponent(`Feedback: ${category} from ${name}`);
+            const body = encodeURIComponent(`Name: ${name}\nCategory: ${category}\n\nMessage:\n${message}`);
+            
+            const mailtoLink = `mailto:akira.kai.272@gmail.com?subject=${subject}&body=${body}`;
+            
+            // Hide the form and show the success/fallback state
+            document.getElementById('feedbackForm').classList.add('hidden');
+            document.getElementById('successMessage').classList.remove('hidden');
+            
+            // Attempt to open the email client
+            window.location.href = mailtoLink;
+        });
+
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            servicesDropdown.classList.toggle('active');
+        }
+        window.onclick = () => servicesDropdown.classList.remove('active');
+
+        window.addEventListener('scroll', () => {
+            const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10;
+            document.body.classList.toggle('footer-visible', atBottom);
+        }, { passive: true });
+    </script>
+</body>
+</html>
