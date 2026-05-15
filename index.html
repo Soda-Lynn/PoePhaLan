@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="google-site-verification" content="u9baiUp4JVLy-SFsnrelzgeVWzptT3Sr8xDeEl2MJBs" />
@@ -45,6 +45,13 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&display=swap');
+
+        @font-face {
+            font-family: 'W30ArtHouse';
+            src: url('fonts/W30ART HOUSE.TTF') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
         * {
             box-sizing: border-box;
@@ -161,6 +168,13 @@
         header .logo-area h1 img {
             width: 6rem;
             height: 6rem;
+        }
+
+        .myanmar-text {
+            font-family: 'W30ArtHouse', sans-serif;
+            font-size: 2.2rem;
+            text-transform: none;
+            font-weight: normal;
         }
 
         /* Dropdown Navigation Styling */
@@ -805,7 +819,7 @@
     <div class="page-shell">
         <header>
             <div class="logo-area animate-entry" style="animation-delay: 0.1s; cursor:pointer" onclick="location.href='index.html'">
-                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2"> အမှတ်တရ</h1>
+                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2"><span class="myanmar-text">trSwfw&</span></h1>
             </div>
             <button class="menu-toggle animate-entry" id="menuToggle" style="animation-delay: 0.2s;">
                 <span></span><span></span><span></span>
