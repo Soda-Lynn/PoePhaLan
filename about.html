@@ -28,9 +28,17 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Dancing+Script:wght@600&display=swap');
         
-        @keyframes pageReveal {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: #2d1b2d; /* Matches the footer background */
+            z-index: -2;
         }
 
         body { 
@@ -41,16 +49,28 @@
             scroll-behavior: smooth;
         }
 
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .page-shell {
             position: relative;
             z-index: 10;
             background: #ede4d6;
-            margin-bottom: 300px;
+            margin-bottom: 300px; /* Matches index.html */
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             min-height: 100vh;
+            overflow: hidden;
             transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.6s ease;
             transform-origin: bottom center;
-            animation: pageReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translateZ(0);
+            animation: slideUpFade 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         header {
@@ -203,7 +223,7 @@
             display: flex; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s;
         }
-        .footer-tag { padding: 8px 20px; display: inline-block; font-weight: 900; color: rgb(255, 255, 255); text-transform: uppercase; font-size: 0.75rem; }
+        .footer-tag { padding: 8px 20px; display: inline-block; font-weight: 900; color: white; text-transform: uppercase; font-size: 0.75rem; }
         .footer-visible .page-shell { transform: scale(0.92) translateY(-20px); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; }
         .footer-visible footer { opacity: 1; visibility: visible; transition-delay: 0.5s; }
 
@@ -223,10 +243,6 @@
                 transition: 0.4s;
             }
             .navbar.active { right: 0; }
-            footer { 
-                height: 250px; 
-                padding: 0 20px;
-            }
             .dropdown-menu {
                 position: static;
                 opacity: 1;
@@ -237,11 +253,15 @@
                 padding-left: 15px;
             }
             .page-shell { margin-bottom: 250px; }
-        }
-
-        .footer-content {
-            max-width: 1360px;
-            margin: 0 auto;
+            footer {
+                position: fixed; height: 250px;
+            }
+            footer .footer-content {
+                padding: 0 20px;
+            }
+            footer p {
+                margin-bottom: 2rem !important;
+            }
         }
 
         /* Team Carousel Styles */
@@ -421,6 +441,19 @@
         menuToggle.addEventListener('click', () => {
             menuToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
+        });
+
+        const observerOptions = { threshold: 0.15 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
         });
 
         window.addEventListener('scroll', () => {

@@ -33,6 +33,14 @@
             scroll-behavior: smooth;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: #ff4d4d;
+            z-index: -2;
+        }
+
         .page-shell {
             position: relative;
             z-index: 10;
@@ -40,8 +48,11 @@
             margin-bottom: 300px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             min-height: 100vh;
+            overflow: hidden;
             transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.6s ease;
             transform-origin: bottom center;
+            transform: translateZ(0);
+            animation: slideUpFade 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         header {
@@ -133,7 +144,7 @@
             display: flex; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s;
         }
-        .footer-tag { padding: 8px 20px; display: inline-block; font-weight: 900; color: black; text-transform: uppercase; font-size: 0.75rem; }
+        .footer-tag { padding: 8px 20px; display: inline-block; font-weight: 900; color: white; text-transform: uppercase; font-size: 0.75rem; }
         .footer-visible .page-shell {
             transform: scale(0.92) translateY(-20px);
             border-bottom-left-radius: 40px;
@@ -189,9 +200,14 @@
             }
             .page-shell { margin-bottom: 250px; }
             footer { 
-                height: 250px; 
-                padding: 0 20px;
                 position: fixed;
+                height: 250px;
+            }
+            footer .footer-content {
+                padding: 0 20px;
+            }
+            footer p {
+                margin-bottom: 2rem !important;
             }
         }
     </style>
@@ -270,11 +286,11 @@
     <footer>
         <div class="footer-content scroll-reveal">
             <div class="footer-tag"></div> 
-            <div class="footer-tag-2 mb-1"> Amhattaya © 2026</div>
-            <p style="color: rgba(0, 0, 0); font-size: 0.8rem; margin-top: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
+            <div class="footer-tag-2 mb-1 text-white"> Amhattaya © 2026</div>
+            <p style="color: white; font-size: 0.8rem; margin-top: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
                  Your Digital Gift Platform | Created by The Moths
             </p>
-            <p style="color: rgba(0, 0, 0, 0.6); font-size: 0.65rem; margin-bottom: 5rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.65rem; margin-bottom: 5rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
                 © 2026 Amhattaya. Visual identity and interactive elements by The Moth Studio. Stay Close to the light. All rights reserved.
             </p>
         </div>
