@@ -526,6 +526,24 @@
     </div>
 
     <script>
+        // Creative ASMR Audio Engine
+        const sfx = {
+            ctx: null,
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            play(freq = 400, type = 'sine', duration = 0.1) {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + duration);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + duration);
+            }
+        };
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -552,6 +570,7 @@
         });
 
         menuToggle.addEventListener('click', () => { menuToggle.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        document.querySelectorAll('button, .color-dot').forEach(el => el.addEventListener('click', () => sfx.play(600, 'triangle', 0.05)));
         
         const FOOD_DATA = {
             "Snacks": [
@@ -711,6 +730,7 @@
 
         // Navigation Logic
         function navigate(direction) {
+            sfx.play(300, 'sine', 0.2);
             const total = document.querySelectorAll('.cube-wrapper').length;
             currentBoxIndex = Math.min(Math.max(currentBoxIndex + direction, 0), total - 1);
             updateCarousel();
@@ -779,6 +799,7 @@
         }
 
         function addToBox(fileName, itemType, itemId) {
+            sfx.play(800, 'sine', 0.05);
             cubes.forEach((cube, idx) => {
                 const inv = inventories[idx];
                 const itemsContainer = cube.querySelector('.box-items');

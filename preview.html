@@ -6,6 +6,7 @@
     <title>Preview Your Gift</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <meta name="application-name" content="Amhattaya" lang="en" />
 
@@ -281,7 +282,18 @@
         };
 
         function startOpeningSequence() {
+            if (document.getElementById('mini-card-wrapper').classList.contains('opening')) return;
+            
             document.getElementById('mini-card-wrapper').classList.add('opening');
+            
+            // Celebrate!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.7 },
+                colors: ['#ff9494', '#ffdb58', '#73ff00', '#ffffff']
+            });
+
             setTimeout(() => {
                 openFullMessage();
             }, 600);
