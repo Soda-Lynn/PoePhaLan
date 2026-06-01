@@ -303,6 +303,7 @@
             position: relative;
             z-index: 10;
             max-width: 100%;
+            padding-right: 35%; /* Reserve space for the absolute image on desktop */
         }
 
         .hero-copy-top {
@@ -389,13 +390,15 @@
 
         .hero-visual {
             position: absolute;
-            right: -20px;
+            right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 45%;
+            width: 35%;
+            max-width: 400px;
             z-index: 5;
             pointer-events: none;
             filter: drop-shadow(20px 20px 0px rgba(0,0,0,0.05));
+            animation: float 6s ease-in-out infinite;
         }
 
         @keyframes float {
@@ -679,6 +682,7 @@
             /* Reordering for mobile */
             .hero-content {
                 display: flex;
+                padding-right: 0; /* Remove clearance padding on mobile */
                 flex-direction: column;
             }
             .hero-title { order: 1; }
