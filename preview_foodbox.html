@@ -10,13 +10,12 @@
     <meta name="application-name" content="Amhattaya" lang="en" />
     <meta name="description" content="Someone has sent you a digital gift! Open this link to see your interactive 3D food box." />
 
-   <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Amhattaya" />
-    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <meta name="description" content="Someone has sent you a digital food box from Amhattaya. Click to open your food box" />
 
@@ -146,8 +145,7 @@
         .box-1, .box-2, .box-3, .box-4, .box-5, .box-6 { 
             --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); 
         }
-        .box-2 { --texture: none; } /* Keeping box-2 unique as per fodbox.html logic if applicable, 
-                                       but fodbox.html uses cardboard for 1,3,4,5,6 */
+        .box-2 { --texture: none; }
         .box-1, .box-3, .box-4, .box-5, .box-6 { --texture: url('https://www.transparenttextures.com/patterns/cardboard.png'); }
     </style>
 </head>
@@ -216,7 +214,6 @@
         </div>
     </div>
     <script>
-        // Function to decode a Base64 string from a URL, safe for UTF-8
         function decodeBase64URL(str) {
             return decodeURIComponent(atob(str).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -262,10 +259,9 @@
                 items.forEach((itemStr) => {
                     const [id, left, top] = itemStr.split('|');
                     const img = document.createElement('img');
-                    img.src = id + ".svg";
+                    img.src = "imgs/" + id + ".svg";
                     img.className = 'food-in-box';
 
-                    // Use the exact coordinates passed from the studio
                     img.style.left = left + "%";
                     img.style.top = top + "%";
                     img.style.transform = `translateZ(var(--z)) rotateX(${-cube.rotX}deg)`;
@@ -273,7 +269,6 @@
                 });
             }
 
-            // Drag Rotation Logic
             let startX, startY;
             cube.addEventListener('mousedown', (e) => {
                 startX = e.pageX; startY = e.pageY;
@@ -298,7 +293,6 @@
         function toggleLid(lidEl) {
             const isOpen = lidEl.classList.toggle('open');
             if (isOpen) {
-                // Trigger Confetti
                 confetti({
                     particleCount: 100,
                     spread: 70,

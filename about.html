@@ -12,16 +12,15 @@
     <meta name="apple-mobile-web-app-title" content="Amhattaya" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Meta Tags -->
     <meta name="description" content="Learn the story behind Amhattaya (Moths) and our mission to create digital beauty.">
     <meta property="og:title" content="About Us | Amhattaya">
     <meta property="og:description" content="The story behind Amhattaya, our handcrafted digital gift platform.">
-    <meta property="og:image" content="https://amhattaya.onrender.com/rose.png">
+    <meta property="og:image" content="https://amhattaya.onrender.com/imgs/rose.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="About Amhattaya">
     <meta name="twitter:description" content="Our journey in digital gift-giving.">
-    <meta name="twitter:image" content="https://amhattaya.onrender.com/rose.png">
+    <meta name="twitter:image" content="https://amhattaya.onrender.com/imgs/rose.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -36,7 +35,7 @@
             content: '';
             position: fixed;
             inset: 0;
-            background: #2d1b2d; /* Matches the footer background */
+            background: #2d1b2d;
             z-index: -2;
         }
 
@@ -62,7 +61,7 @@
             position: relative;
             z-index: 10;
             background: #ede4d6;
-            margin-bottom: 300px; /* Matches index.html */
+            margin-bottom: 300px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             min-height: 100vh;
             overflow: hidden;
@@ -170,7 +169,6 @@
 
         .dropdown-item:hover { background: #d2fc8d; }
 
-        /* Mobile Menu Toggle */
         .menu-toggle {
             display: none;
             width: 45px;
@@ -263,7 +261,6 @@
             }
         }
 
-        /* Team Carousel Styles */
         .team-carousel-container {
             position: relative;
             overflow: hidden;
@@ -305,7 +302,7 @@
     <div class="page-shell">
         <header>
             <div class="logo-area animate-entry" style="animation-delay: 0.1s; cursor:pointer" onclick="location.href='index.html'">
-                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Amhattaya</h1>
+                <h1><img src="imgs/logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Amhattaya</h1>
             </div>
             <button class="menu-toggle" id="menuToggle">
                 <span></span><span></span><span></span>
@@ -383,21 +380,19 @@
                 <p class="text-lg font-bold leading-relaxed text-gray-800 mt-6">This platform is brought to you by the combined efforts of this people.</p>
                 <div class="neo-card mt-8 max-w-3xl mx-auto bg-[#d2fc8d]">
                     <div>
-                        <img src="team_bg.png" alt="Team Logo" class="w-24 h-24 mx-auto mb-4 object-contain">
+                        <img src="imgs/team_bg.png" alt="Team Logo" class="w-24 h-24 mx-auto mb-4 object-contain">
                         <h3 class="font-black uppercase text-sm mb-6 text-gray-500 tracking-widest">The Moths</h3>
                         <div class="team-carousel-container">
                             <div class="team-track" id="teamTrack">
-                                <!-- Leaders -->
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-yellow-300 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-black uppercase">Khin (Lead)</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-yellow-300 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-black uppercase">Soda (Lead)</span></div>
-                                <!-- Members -->
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-green-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">ရွှေရင်မအေး</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-pink-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Zwe</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-purple-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Mon</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-orange-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Yamohn</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-cyan-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">UCSwayn</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-blue-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Mg Mg</span></div>
-                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-red-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">May Myatnoe Oo</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-yellow-300 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-black uppercase">Khin (Lead)</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-yellow-300 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-black uppercase">Soda (Lead)</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-green-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">ရွှေရင်မအေး</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-pink-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Zwe</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-purple-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Mon</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-orange-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Yamohn</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-cyan-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">UCSwayn</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-blue-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">Mg Mg</span></div>
+                                <div class="team-member-card flex flex-col items-center"><div class="w-12 h-12 bg-red-200 border-2 border-black rounded-full mb-1 flex items-center justify-center overflow-hidden"><img src="imgs/team_logo.png" class="w-full h-full object-cover"></div><span class="text-[10px] font-bold uppercase">May Myatnoe Oo</span></div>
                             </div>
                         </div>
                         <div class="flex justify-center gap-4 mt-4">
@@ -432,7 +427,6 @@
             servicesDropdown.classList.toggle('active');
         }
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', () => {
             servicesDropdown.classList.remove('active');
         });
@@ -493,7 +487,6 @@
             track.style.transform = `translateX(-${currentTeamIndex * cardWidth}px)`;
         }
 
-        // Center Soda on load (Soda is index 1, centering depends on screen size)
         window.addEventListener('load', () => {
             const initialPos = window.innerWidth < 640 ? 0 : 0; 
             moveCarousel(initialPos, true);

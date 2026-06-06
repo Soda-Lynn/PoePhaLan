@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bouquet Studio | Test</title>
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
     <link rel="shortcut icon" href="/favicon/favicon.ico" />
@@ -18,7 +16,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- meta og tags -->
     <meta property="og:title" content="Amhattaya - Bouquet Studio" />
     <meta property="og:site_name" content="Amhattaya" />
     <meta
@@ -32,7 +29,6 @@
     <meta property="og:url" content="https://amhattaya.onrender.com/bouquet.html" />
     <meta property="og:type" content="website" />
 
-    <!-- schema -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -354,7 +350,7 @@
     <div class="page-shell">
         <header>
             <div class="logo-area animate-entry" style="animation-delay: 0.1s; cursor:pointer" onclick="location.href='index.html'">
-                <h1><img src="logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Amhattaya</h1>
+                <h1><img src="imgs/logo.svg" alt="Logo" class="w-6 h-6 inline-block mr-2">Amhattaya</h1>
             </div>
             <button class="menu-toggle animate-entry" id="menuToggle" style="animation-delay: 0.2s;">
                 <span></span><span></span><span></span>
@@ -390,9 +386,9 @@
                 <div class="flower-counter" id="flower-counter">FLOWERS: 0 / 12</div>
                 <div id="bouquet-wrapper" class="transition-all duration-500">
                     <div id="bouquet-container">
-                        <img id="wrap-back-img" src="wrap_back_1.svg" alt="back wrap">
+                        <img id="wrap-back-img" src="imgs/wrap_back_1.svg" alt="back wrap">
                         <div id="flower-layer"></div>
-                        <img id="wrap-front-img" src="wrap_front_1.svg" alt="front wrap">
+                        <img id="wrap-front-img" src="imgs/wrap_front_1.svg" alt="front wrap">
                     </div>
                 </div>
                 <div class="gift-card rounded-lg">
@@ -427,7 +423,6 @@
             servicesDropdown.classList.toggle('active');
         }
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', () => {
             servicesDropdown.classList.remove('active');
         });
@@ -443,17 +438,17 @@
         });
 
         const FLOWERS = [
-            { id: 'rose', name: 'Rose', color: '#ff9494', img: 'rose.svg', meaning: 'Love & Passion' },
-            { id: 'sunflower', name: 'Sunflower', color: '#ffdb58', img: 'sunflower.svg', meaning: 'Adoration & Loyalty' },
-            { id: 'tulip', name: 'Tulip', color: '#ffb7ff', img: 'tulip.svg', meaning: 'Perfect Love' },
-            { id: 'lily', name: 'Lily', color: '#ffffff', img: 'lily.svg', meaning: 'Purity & Rebirth' },
-            { id: 'carnation', name: 'Carnation', color: '#ffcaaf', img: 'carnation.svg', meaning: 'Devotion & Distinction' },
-            { id: 'orchid', name: 'Orchid', color: '#c3aaff', img: 'orchid.svg', meaning: 'Strength & Beauty' },
-            { id: 'daisy', name: 'Daisy', color: '#fef3c7', img: 'daisy.svg', meaning: 'Innocence & New Starts' },
-            { id: 'daffodil', name: 'Daffodil', color: '#fff700', img: 'daffodil.svg', meaning: 'New Beginnings' },
-            { id: 'lilac', name: 'Lilac', color: '#dcd0ff', img: 'lilac.svg', meaning: 'First Emotions of Love' },
-            { id: 'baby_breath', name: "Baby's Breath", color: '#ffffff', img: 'baby_breath.svg', meaning: 'Everlasting Love' },
-            { id: 'lavender', name: 'Lavender', color: '#e6e6fa', img: 'lavender.svg', meaning: 'Serenity & Grace' }
+            { id: 'rose', name: 'Rose', color: '#ff9494', img: 'imgs/rose.svg', meaning: 'Love & Passion' },
+            { id: 'sunflower', name: 'Sunflower', color: '#ffdb58', img: 'imgs/sunflower.svg', meaning: 'Adoration & Loyalty' },
+            { id: 'tulip', name: 'Tulip', color: '#ffb7ff', img: 'imgs/tulip.svg', meaning: 'Perfect Love' },
+            { id: 'lily', name: 'Lily', color: '#ffffff', img: 'imgs/lily.svg', meaning: 'Purity & Rebirth' },
+            { id: 'carnation', name: 'Carnation', color: '#ffcaaf', img: 'imgs/carnation.svg', meaning: 'Devotion & Distinction' },
+            { id: 'orchid', name: 'Orchid', color: '#c3aaff', img: 'imgs/orchid.svg', meaning: 'Strength & Beauty' },
+            { id: 'daisy', name: 'Daisy', color: '#fef3c7', img: 'imgs/daisy.svg', meaning: 'Innocence & New Starts' },
+            { id: 'daffodil', name: 'Daffodil', color: '#fff700', img: 'imgs/daffodil.svg', meaning: 'New Beginnings' },
+            { id: 'lilac', name: 'Lilac', color: '#dcd0ff', img: 'imgs/lilac.svg', meaning: 'First Emotions of Love' },
+            { id: 'baby_breath', name: "Baby's Breath", color: '#ffffff', img: 'imgs/baby_breath.svg', meaning: 'Everlasting Love' },
+            { id: 'lavender', name: 'Lavender', color: '#e6e6fa', img: 'imgs/lavender.svg', meaning: 'Serenity & Grace' }
         ];
 
         let bouquet = [];
@@ -558,8 +553,8 @@
 
         function changeWrap() {
             wrapIdx = (wrapIdx % 6) + 1;
-            document.getElementById('wrap-back-img').src = `wrap_back_${wrapIdx}.svg`;
-            document.getElementById('wrap-front-img').src = `wrap_front_${wrapIdx}.svg`;
+            document.getElementById('wrap-back-img').src = `imgs/wrap_back_${wrapIdx}.svg`;
+            document.getElementById('wrap-front-img').src = `imgs/wrap_front_${wrapIdx}.svg`;
         }
 
         function toggleMessage() { document.getElementById('main-builder').classList.toggle('show-msg'); }

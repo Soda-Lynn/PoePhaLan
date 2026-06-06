@@ -3,45 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Your Gift</title>
+    <title>Amhattaya | Preview Your Gift</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <meta name="application-name" content="Amhattaya" />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Amhattaya" />
-    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <meta name="description" content="Someone has sent you a digital bouquet from Amhattaya. Click to open your bouquet" />
 
-    <!-- meta og tags -->
-    <meta property="og:title" content="You've received a Bouquet!  " />
+    <meta property="og:title" content="You've received a Bouquet!" />
     <meta property="og:site_name" content="Amhattaya" />
-    <meta
-      property="og:description"
-      content="Someone sent you a digital bouquet from Amhattaya. Click to open your beautiful bouquet!"
-    />
-    <meta
-      property="og:image"
-      content="https://amhattaya.onrender.com/pre.png"
-    />
+    <meta property="og:description" content="Someone sent you a digital bouquet from Amhattaya. Click to open your beautiful bouquet!" />
+    <meta property="og:image" content="https://amhattaya.onrender.com/imgs/pre.png" />
     <meta property="og:type" content="website" /> 
-
-    <!-- schema -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebPage", 
-        "name": "Amhattaya - Digital Gift Preview",
-        "description": "View your digital bouquet sent from someone."
-      }
-    </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
@@ -79,23 +60,9 @@
         }
         #mini-card-wrapper:hover { transform: rotate(0deg) scale(1.1); }
 
-        @media (max-width: 640px) {
-            #mini-card-wrapper {
-                width: 110px; height: 75px;
-            }
-        }
-
         .envelope-back { 
             position: absolute; inset: 0; background: #fff; border: 2px solid black; 
             box-shadow: 4px 4px 0px 0px black; z-index: 1;
-        }
-
-        .envelope-flap {
-            position: absolute; top: 0; left: 0; width: 100%; height: 50%;
-            background: #f0f0f0; border: 2px solid black;
-            z-index: 5; transform-origin: top;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
         }
 
         .envelope-paper {
@@ -105,10 +72,9 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .opening .envelope-flap { transform: rotateX(180deg); z-index: 0; }
         .opening .envelope-paper { transform: translateY(-40px) scale(0.9); opacity: 0; }
-        #mini-preview-msg { font-size: 10px; }
-        #bouquet-container { position: relative; width: 500px; height: 500px; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; transition: all 0.3s ease; }
+        
+        #bouquet-container { position: relative; width: 500px; height: 500px; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; }
         #wrap-back-img, #wrap-front-img { width: 420px; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); pointer-events: none; }
         #wrap-back-img { z-index: 10; } 
         #flower-layer { position: absolute; width: 100%; height: 100%; z-index: 20; pointer-events: none; bottom: 0; } 
@@ -119,9 +85,9 @@
         #message-overlay {
             position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); 
             z-index: 100; display: none; align-items: center; justify-content: center; opacity: 0; 
-            transition: opacity 0.4s ease; backdrop-filter: blur(0px);
+            transition: opacity 0.4s ease; backdrop-filter: blur(8px);
         }
-        #message-overlay.active { display: flex; opacity: 1; backdrop-filter: blur(8px); }
+        #message-overlay.active { display: flex; opacity: 1; }
 
         #zoom-card {
             background: white; border: 4px solid black; border-radius: 16px; width: 90%; max-width: 500px; padding: 40px;
@@ -131,20 +97,17 @@
         }
         #message-overlay.active #zoom-card { transform: scale(1) rotate(0deg); opacity: 1; }
 
-        .handwriting-view { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; line-height: 1.6; margin: 25px 0; color: #2d1b2d; }
-
         #link-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
 
-        /* Responsive scaling for smaller screens */
         @media (max-width: 640px) {
             #bouquet-container { width: 350px; height: 350px; }
             #wrap-back-img, #wrap-front-img { width: 300px; }
             .placed-flower { width: 180px; margin-left: -90px; bottom: 60px; }
-            #mini-preview-msg { font-size: 6px; }
+            #mini-card-wrapper { width: 110px; height: 75px; }
         }
     </style>
 </head>
-<body class="bg-[#e9e4d1]">
+<body>
 
     <div id="interactive-grid"></div>
 
@@ -156,9 +119,9 @@
         </header>
 
         <div id="bouquet-container" class="bg-transparent">
-            <img id="wrap-back-img" src="wrap_back_1.svg">
+            <img id="wrap-back-img" src="imgs/wrap_back_1.svg">
             <div id="flower-layer"></div>
-            <img id="wrap-front-img" src="wrap_front_1.svg">
+            <img id="wrap-front-img" src="imgs/wrap_front_1.svg">
             
             <div id="mini-card-wrapper" onclick="startOpeningSequence()">
                 <div class="envelope-paper" id="paper">
@@ -198,13 +161,12 @@
                 <p id="zoom-to" class="font-black uppercase text-xs"></p>
                 <button onclick="closeFullMessage()" class="font-black text-xl hover:text-red-500">×</button>
             </div>
-            <p id="zoom-body" class="handwriting-view"></p>
+            <p id="zoom-body" style="font-size: 1.6rem; line-height: 1.6; margin: 25px 0; color: #2d1b2d;"></p>
             <p id="zoom-from" class="font-black text-right italic text-sm"></p>
         </div>
     </div>
 
     <script>
-        // Function to decode a Base64 string from a URL, safe for UTF-8
         function decodeBase64URL(str) {
             return decodeURIComponent(atob(str).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -219,10 +181,7 @@
             if (encodedData) {
                 try {
                     data = JSON.parse(decodeBase64URL(encodedData));
-                } catch (e) {
-                    console.error("Error decoding or parsing URL data:", e);
-                    // Fallback to default or show error
-                }
+                } catch (e) { console.error("Error decoding URL data:", e); }
             }
 
             const flowers = data.f?.split(',') || [];
@@ -231,49 +190,26 @@
             const msg = data.m || 'No message provided.';
             const from = data.fr || 'Sender';
             
-            document.getElementById('wrap-back-img').src = `wrap_back_${wrap}.svg`;
-            document.getElementById('wrap-front-img').src = `wrap_front_${wrap}.svg`;
+            document.getElementById('wrap-back-img').src = `imgs/wrap_back_${wrap}.svg`;
+            document.getElementById('wrap-front-img').src = `imgs/wrap_front_${wrap}.svg`;
             document.getElementById('zoom-to').textContent = to;
             document.getElementById('zoom-body').textContent = msg;
             document.getElementById('zoom-from').textContent = from;
             document.getElementById('mini-preview-to').textContent = "To: " + to;
-            document.getElementById('mini-preview-msg').textContent = msg;
             document.getElementById('mini-preview-from').textContent = "- " + from;
 
             if (flowers.length > 0 && flowers[0] !== "") {
                 flowers.forEach((flowerStr, index) => {
                     setTimeout(() => {
                         const parts = flowerStr.split('|');
-                        const id = parts[0];
-                        
                         const img = document.createElement('img');
-                        img.src = `${id}.svg`;
+                        img.src = `imgs/${parts[0]}.svg`;
                         img.className = 'placed-flower';
                         
                         if (parts.length > 1) {
-                            // Use explicit arrangement data from the URL
-                            const rot = parts[1];
-                            const scale = parts[2];
-                            const mb = parts[3];
-                            const flip = parts[4];
-                            const zIndex = parts[5];
-
-                            img.style.transform = `rotate(${rot}deg) scale(${scale}) scaleX(${flip})`;
-                            img.style.marginBottom = `${mb}px`;
-                            img.style.zIndex = zIndex;
-                        } else {
-                            // Fallback to pseudo-random if data isn't present
-                            const pseudoRandom = (seed) => {
-                                const x = Math.sin(seed) * 10000;
-                                return x - Math.floor(x);
-                            };
-                            const rot = (pseudoRandom(index + 1) - 0.5) * 60;
-                            const mb = pseudoRandom(index + 2) * 35;
-                            const flip = pseudoRandom(index + 3) > 0.5 ? -1 : 1;
-
-                            img.style.transform = `rotate(${rot}deg) scaleX(${flip})`;
-                            img.style.marginBottom = `${mb}px`;
-                            img.style.zIndex = index;
+                            img.style.transform = `rotate(${parts[1]}deg) scale(${parts[2]}) scaleX(${parts[4]})`;
+                            img.style.marginBottom = `${parts[3]}px`;
+                            img.style.zIndex = parts[5];
                         }
                         document.getElementById('flower-layer').appendChild(img);
                     }, index * 50);
@@ -282,21 +218,9 @@
         };
 
         function startOpeningSequence() {
-            if (document.getElementById('mini-card-wrapper').classList.contains('opening')) return;
-            
             document.getElementById('mini-card-wrapper').classList.add('opening');
-            
-            // Celebrate!
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.7 },
-                colors: ['#ff9494', '#ffdb58', '#73ff00', '#ffffff']
-            });
-
-            setTimeout(() => {
-                openFullMessage();
-            }, 600);
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 } });
+            setTimeout(openFullMessage, 600);
         }
 
         function openFullMessage() {
@@ -311,7 +235,13 @@
         }
 
         function showLinkModal() {
-            document.getElementById('final-link').value = window.location.href;
+            const urlParams = new URLSearchParams(window.location.search);
+            const shortId = urlParams.get('id'); 
+            
+            document.getElementById('final-link').value = shortId 
+                ? `https://amhattaya.onrender.com/s.html?id=${shortId}` 
+                : window.location.href;
+                
             document.getElementById('link-modal').style.display = 'flex';
         }
 
@@ -328,7 +258,6 @@
             const container = document.getElementById('bouquet-container');
             const miniCard = document.getElementById('mini-card-wrapper');
             miniCard.style.display = 'none';
-            
             html2canvas(container, { backgroundColor: null, scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'my-bouquet.png';
