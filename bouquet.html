@@ -263,13 +263,6 @@
         function showWarning() { const w = document.getElementById('limit-warning'); w.classList.remove('hidden'); setTimeout(() => w.classList.add('hidden'), 2000); }
         function resetBouquet() { bouquet = []; document.getElementById('flower-layer').innerHTML = ''; updateUI(); }
 
-        function encodeBase64URL(str) {
-            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-                function toSolidBytes(match, p1) {
-                    return String.fromCharCode(parseInt(p1, 16));
-                }));
-        }
-
         function goToPreview() {
             if (bouquet.length === 0) { alert("Please add some flowers first!"); return; }
             
@@ -285,7 +278,8 @@
                 fr: document.getElementById('msg-from').value
             };
 
-            const encodedData = encodeBase64URL(JSON.stringify(data));
+            // Encode the data to be URL-safe
+            const encodedData = btoa(encodeURIComponent(JSON.stringify(data)));
             window.location.href = `preview.html?data=${encodedData}`;
         }
     </script>

@@ -560,13 +560,6 @@
             if(listTop) listTop.innerHTML = content;
         }
 
-        function encodeBase64URL(str) {
-            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-                function toSolidBytes(match, p1) {
-                    return String.fromCharCode(parseInt(p1, 16));
-                }));
-        }
-
         function goToPreview() {
             const activeCube = cubes[currentBoxIndex];
             const foodItems = activeCube.querySelectorAll('.food-in-box');
@@ -583,7 +576,7 @@
                 fr: document.getElementById('msg-from').value
             };
 
-            const encodedData = encodeBase64URL(JSON.stringify(data));
+            const encodedData = btoa(encodeURIComponent(JSON.stringify(data)));
             window.location.href = `preview_foodbox.html?data=${encodedData}`;
         }
 

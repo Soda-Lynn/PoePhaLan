@@ -26,8 +26,10 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;700&display=swap');
         
-        body { font-family: 'Bricolage Grotesque', sans-serif; background-color: #e9e4d1; margin: 0; overflow: hidden; }
+        body { font-family: 'Space Grotesk', 'Bricolage Grotesque', 'Noto Sans Myanmar', sans-serif; background-color: #e9e4d1; margin: 0; overflow: hidden; }
 
         @keyframes pageReveal {
             from { opacity: 0; transform: translateY(20px); }
@@ -167,12 +169,6 @@
     </div>
 
     <script>
-        function decodeBase64URL(str) {
-            return decodeURIComponent(atob(str).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-        }
-
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             const encodedData = params.get('data');
@@ -180,7 +176,8 @@
 
             if (encodedData) {
                 try {
-                    data = JSON.parse(decodeBase64URL(encodedData));
+                    // Decode the URL-safe data
+                    data = JSON.parse(decodeURIComponent(atob(encodedData)));
                 } catch (e) { console.error("Error decoding URL data:", e); }
             }
 
@@ -196,6 +193,7 @@
             document.getElementById('zoom-body').textContent = msg;
             document.getElementById('zoom-from').textContent = from;
             document.getElementById('mini-preview-to').textContent = "To: " + to;
+            document.getElementById('mini-preview-msg').textContent = msg;
             document.getElementById('mini-preview-from').textContent = "- " + from;
 
             if (flowers.length > 0 && flowers[0] !== "") {
